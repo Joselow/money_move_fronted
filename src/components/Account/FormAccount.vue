@@ -11,8 +11,14 @@ const initialBalance = ref(0)
 
 const emit = defineEmits(['created'])
 
+const showError = ref(false)
+
 async function handleSubmit() {
-  if (!name.value) return
+  
+  if (!name.value) {
+    showError.value = true
+    return 
+  }
 
   console.log('crea');
   
@@ -36,8 +42,9 @@ initialBalance.value = 0
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6 w-full">
     <div>
-      <label class="block text-sm font-medium text-gray-200 mb-1">Nombre *</label>
+      <label class="block text-sm font-medium text-gray-200 mb-1">Nombre</label>
       <input v-model="name" required class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="Nombre de la cuenta" />
+      <p v-if="showError" class="text-red-400 text-sm text-center bg-red-900/20 p-2 rounded-lg border border-red-800">El nombre es requerido</p>
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-200 mb-1">Descripción</label>

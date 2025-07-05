@@ -1,24 +1,31 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import Cookies from 'js-cookie'
+
+const TOKEN_KEY = 'auth_token'
 
 // Función para verificar si el usuario está autenticado
 export function isAuthenticated(): boolean {
-  const token = localStorage.getItem('authToken')
+  const token = Cookies.get(TOKEN_KEY)
   return !!token
 }
 
 // Función para obtener el token de autenticación
 export function getAuthToken(): string | null {
-  return localStorage.getItem('authToken')
+  return Cookies.get(TOKEN_KEY) || null
 }
 
 // Función para establecer el token de autenticación
 export function setAuthToken(token: string): void {
-  localStorage.setItem('authToken', token)
+  Cookies.set(TOKEN_KEY, token, { 
+    expires: 1, // 1 día
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  })
 }
 
 // Función para eliminar el token de autenticación (logout)
 export function removeAuthToken(): void {
-  localStorage.removeItem('authToken')
+  Cookies.remove(TOKEN_KEY)
 }
 
 // Guard para rutas protegidas

@@ -1,16 +1,20 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../guards/auth'
+import { authService } from '../services/authService'
+
+const user = ref<any>(null)
 
 export function useAuth() {
   const router = useRouter()
-  const user = ref<any>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   // Computed property para verificar si está autenticado
   const authenticated = computed(() => {
     // return true
+    console.log(isAuthenticated(), user.value);
+    
     return isAuthenticated() && user.value !== null
   })
 
@@ -20,9 +24,7 @@ export function useAuth() {
     error.value = null
 
     try {
-      // Aquí deberías hacer la llamada a tu API
-      // Por ahora simulamos una respuesta exitosa
-      const response = await mockLoginAPI(email, password)
+      const response = await authService.login({ email, password })
       
       if (response.success && response.token) {
         setAuthToken(response.token)
@@ -31,8 +33,8 @@ export function useAuth() {
       } else {
         error.value = response.message || 'Error desconocido'
       }
-    } catch (err) {
-      error.value = 'Error al iniciar sesión'
+    } catch (err: any) {
+      error.value = err.message || 'Error al iniciar sesión'
       console.error('Login error:', err)
     } finally {
       loading.value = false
@@ -40,7 +42,7 @@ export function useAuth() {
   }
 
   // Función de logout
-  const logout = () => {
+  const logout = async () => {
     removeAuthToken()
     user.value = null
     router.push({ name: 'Login' })
@@ -51,10 +53,9 @@ export function useAuth() {
     const token = getAuthToken()
     if (token) {
       try {
-        // Aquí deberías verificar el token con tu API
-        const userData = await mockVerifyToken(token)
-        if (userData) {
-          user.value = userData
+        const response = await authService.getCurrentUser()
+        if (response.success && response.user) {
+          user.value = response.user
         } else {
           logout()
         }
@@ -74,43 +75,4 @@ export function useAuth() {
     logout,
     checkAuth
   }
-}
-
-// Funciones mock para simular la API
-async function mockLoginAPI(email: string, password: string) {
-  // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  
-  // Simular validación básica
-  if (email === 'admin@example.com' && password === 'password') {
-    return {
-      success: true,
-      token: 'mock-jwt-token-' + Date.now(),
-      user: {
-        id: 1,
-        email: email,
-        name: 'Usuario Admin'
-      }
-    }
-  } else {
-    return {
-      success: false,
-      message: 'Credenciales inválidas'
-    }
-  }
-}
-
-async function mockVerifyToken(token: string) {
-  // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  // Simular verificación de token
-  if (token.startsWith('mock-jwt-token-')) {
-    return {
-      id: 1,
-      email: 'admin@example.com',
-      name: 'Usuario Admin'
-    }
-  }
-  return null
 } 

@@ -2,34 +2,52 @@
 import { ref } from 'vue'
 import FullScreenOptions from '../components/FullScreenOptions.vue'
 import FormAccount from '../components/Account/FormAccount.vue'
+import ModalBase from '../commons/ModalBase.vue'
 
 import { useAuth } from '../composables/useAuth'
 import type { Account } from '../interfaces'
 
-const { user, authenticated } = useAuth()
+const { authenticated, logout, user } = useAuth()
 
 
 const showOptions = ref(false)
+const showModalFormAccount = ref(false)
 
 const onCreateAccount = (account: Account) => {
   console.log(account)
+  
+  showModalFormAccount.value = false
 }
+
+
 </script>
 
 <template>
-  <FormAccount @created="onCreateAccount" />
+  
+  <ModalBase v-model="showModalFormAccount">
+    <div class="flex justify-center items-center py-4 px-4">
+      <FormAccount @created="onCreateAccount" />
+    </div>
+  </ModalBase>
+
+  <button @click="showModalFormAccount = true">
+    Crear cuenta
+  </button>
 
 <FullScreenOptions :open="showOptions" @close="showOptions = false">
   <!-- <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" @click="onSelectAccount">
     Cambiar de cuenta
   </button> -->
   <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" 
+    @click="showModalFormAccount = true"
     >
     Crear cuenta
   </button>
-  <!-- <button class="w-full py-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition" @click="onLogout">
-    Cerrar sesión
-  </button> -->
+  <template v-if="authenticated">
+    <button class="w-full py-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition" @click="logout">
+      Cerrar sesión
+    </button>
+  </template>
 </FullScreenOptions>
 
   <div class="text-white">

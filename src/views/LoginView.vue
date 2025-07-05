@@ -67,6 +67,13 @@ async function handleLogin() {
           </span>
           {{ loading ? 'Iniciando sesión...' : 'Acceder' }}
         </button>
+
+        <!-- Enlace a registro -->
+        <div class="text-center">
+          <router-link to="/register" class="text-blue-400 hover:text-blue-300 text-sm">
+            ¿No tienes cuenta? Regístrate
+          </router-link>
+        </div>
         </form>
       </div>
     </div>

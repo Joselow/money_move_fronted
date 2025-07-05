@@ -1,19 +1,17 @@
-import axios from 'axios'
+import api from './api'
 import type { Account } from '../interfaces'
 
-const API_URL = import.meta.env.VITE_API_URL
-
 export const getAccount = async (id: number) => {
-    const response = await axios.get(`${API_URL}/accounts/${id}`)
-    return response.data as Account
+    const response = await api.get<Account>(`/accounts/${id}`)
+    return response.data
 }
 
 export const createAccount = async (account: any) => {
-    const response = await axios.post(`${API_URL}/accounts`, account)
-    return response.data as Account
+    const response = await api.post<Account>('/accounts', account)
+    return response.data
 }
 
 export const deleteAccount = async (id: number) => {
-    await axios.delete(`${API_URL}/accounts/${id}`)
+    await api.delete(`/accounts/${id}`)
     return true
 }

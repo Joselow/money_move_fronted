@@ -4,10 +4,10 @@ import { useAuth } from './composables/useAuth'
 
 const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
 
-const { checkAuth, authenticated } = useAuth()
+const { checkAuth } = useAuth()
 
 onMounted(() => {
-  checkAuth()
+  checkAuth()  
 })
 </script>
 

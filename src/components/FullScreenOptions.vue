@@ -3,20 +3,18 @@
     <!-- Fondo oscuro -->
     <div class="absolute inset-0 bg-black/90 bg-opacity-70 transition-opacity" @click="close"></div>
     <!-- Contenido de opciones -->
-    <div class="relative z-10 w-full max-w-xs mx-auto bg-gray-900 rounded-2xl shadow-2xl p-8 flex flex-col space-y-6  animate-fade-in">
+    <div class="relative z-10 w-full max-w-xs mx-auto bg-gray-900 rounded-2xl shadow-2xl p-8 flex flex-col space-y-3  animate-fade-in">
       <slot />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
 
-const props = defineProps<{ open: boolean }>()
-const emit = defineEmits(['close'])
+const open = defineModel<boolean>({default: false})
 
 function close() {
-  emit('close')
+  open.value = false
 }
 </script>
 

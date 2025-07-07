@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getAuthToken, removeAuthToken } from '../guards/auth'
+import { getAuthToken, removeAuthToken } from '../utils/cookies'
 
 // Crear instancia de axios con configuración base
 const api = axios.create({

@@ -7,6 +7,8 @@ const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
 const { checkAuth } = useAuth()
 
 onMounted(() => {
+  console.log('App mounted');
+  
   checkAuth()  
 })
 </script>

@@ -37,4 +37,11 @@ export interface Transaction {
     categoryId: number;
     createdAt: Date;
     updatedAt: Date;
+}       
+
+// interfaces para la configuracion del usuario
+export interface UserConfig {
+    account: Account | null;
+    hasMultipleAccounts: boolean;
 }
+

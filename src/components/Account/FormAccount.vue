@@ -25,18 +25,18 @@ async function handleSubmit() {
   console.log('crea');
   
 
-const account = await createAccount({
-    name: name.value,
-    description: description.value || undefined,
-    currency: currency.value,
-    initialBalance: initialBalance.value.toString()
-})
-emit('created', account)
-// Limpiar formulario
-name.value = ''
-description.value = ''
-currency.value = 'S/'
-initialBalance.value = 0
+  const account = await createAccount({
+      name: name.value,
+      description: description.value || undefined,
+      currency: currency.value,
+      initialBalance: initialBalance.value.toString()
+  })
+  emit('created', account)
+  // Limpiar formulario
+  name.value = ''
+  description.value = ''
+  currency.value = 'S/'
+  initialBalance.value = 0
  
 }
 </script>

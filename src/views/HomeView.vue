@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import FullScreenOptions from '../components/FullScreenOptions.vue'
-import FormAccount from '../components/Account/FormAccount.vue'
-import ModalBase from '../commons/ModalBase.vue'
 
 import { useAuth } from '../composables/useAuth'
+import { useConfig } from '../composables/useConfig'
 import type { Account } from '../interfaces'
-import { useAccount } from '@/composables/useAccount'
 
-const { authenticated, logout, user } = useAuth()
-const { account } = useAccount()
+const { user } = useAuth()
+const { config } = useConfig()
+
+const { account } = toRefs(config)
+
 
 const showOptions = ref(false)
 const showModalFormAccount = ref(false)
@@ -23,48 +24,7 @@ const onCreateAccount = (account: Account) => {
 </script>
 
 <template>
-  <ModalBase v-model="showModalFormAccount">
-    <div class="py-4 px-4">
-      <h1 class="text-lg font-bold tracking-wider mb-3">
-        <i class="pi pi-address-book" />
-        Crear cuenta
-      </h1>
-      <div class="flex justify-center items-center ">
-        <FormAccount @created="onCreateAccount" >
-          <template #actions>
-            <button type="button" class="px-4 bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition duration-200"
-              @click="showModalFormAccount = false"
-            >
-            <i class="pi pi-arrow-left" />
-            </button>
-          </template>
-        </FormAccount>
-      </div>
-    </div>
-  </ModalBase>
-
-  <FullScreenOptions v-model="showOptions" >
-  
-    <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" 
-      @click="showModalFormAccount = true"
-      >
-      <i class="pi pi-address-book" />
-      Nueva cuenta
-    </button>
-    <template v-if="account">
-      <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" >
-        <i class="pi pi-arrow-right-arrow-left
-    " />
-        Cambiar de cuenta
-      </button>
-      </template>
-    <template v-if="authenticated">
-      <button class="mt-4 w-full py-2 rounded-lg border border-red-600  text-white hover:bg-red-700/50 transition" @click="logout">
-        <i class="pi pi-sign-out" />
-        Cerrar sesión
-      </button>
-    </template>
-</FullScreenOptions>
+  <FullScreenOptions v-model="showOptions" />
 
   <div class="text-white">
     <div class=" w-full relative">
@@ -90,9 +50,11 @@ const onCreateAccount = (account: Account) => {
 
     <div class="mt-2 flex flex-col justify-evenly space-y-4 relative">
       <!-- Panel superior (Balance o resumen) -->
-      <div class="border-2 border-rose-400 rounded-lg w-full h-40 flex items-center justify-center text-3xl text-rose-300">
-        - {{ account?.currency }} 900.00
-      </div>
+      <router-link :to="{ name: 'List' }">
+        <div class="border-2 border-rose-400 rounded-lg w-full h-40 flex items-center justify-center text-3xl text-rose-300">
+          - {{ account?.currency }} 900.00
+        </div>
+      </router-link>
 
       <!-- Contenedor intermedio -->
       <div class="border-2 border-rose-400 rounded-lg w-full h-24 flex items-center justify-center " >

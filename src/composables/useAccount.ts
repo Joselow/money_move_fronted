@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 import * as accountService from '../services/accountService'
 import type { Account } from '../interfaces'
+import { useConfig } from './useConfig'
 
-
-const account = ref<Account | null>(null)
+const { config } = useConfig()
 
 export function useAccount() {
   const loading = ref(false)
@@ -15,8 +15,13 @@ export function useAccount() {
     try {
       const result = await accountService.createAccount({...data })
 
-      if (!account.value) {
-        account.value = result
+      if (config.account) {
+        config.hasMultipleAccounts = true
+        console.log(config.hasMultipleAccounts);
+        
+      } else {
+        config.account = result
+        config.hasMultipleAccounts = false
       }
       return result
     } catch (err: any) {
@@ -30,7 +35,6 @@ export function useAccount() {
   return {
     loading,
     error,
-    account,
     createAccount
   }
 } 

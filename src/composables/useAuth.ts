@@ -1,12 +1,15 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../guards/auth'
+import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../utils/cookies'
 import { authService } from '../services/authService'
-import { useAccount } from './useAccount'
+import { useConfig } from './useConfig'
 
 const user = ref<any>(null)
 
-const { account } = useAccount()  // Fuera porque el estado es global
+const { getConfig } = useConfig()
+ // Fuera porque el estado es globa
+  getConfig()
+
 export function useAuth() {
   
   const router = useRouter()
@@ -59,20 +62,13 @@ export function useAuth() {
       try {
         const response = await authService.getCurrentUser()
 
-        if (!response.success) {
+        if (!response.success || !response.user) {
           logout()
         }
-
-        if (response.user) {
-          user.value = response.user
+        
+        user.value = response.user
+        // getConfig()
           console.log(user.value);
-        } 
-        if (response.account) {
-          account.value = response.account
-
-          console.log(account.value);
-          
-        }
       } catch (err) {
         console.error('Token verification error:', err)
         logout()

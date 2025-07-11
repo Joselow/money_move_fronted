@@ -1,8 +1,6 @@
 import { isAuthenticated } from '@/utils/cookies'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import { useConfig } from '@/composables/useConfig'
-
-const { getConfig, config } = useConfig()
+import { useAuth } from '@/composables/useAuth'
 
 
 // Guard para rutas protegidas
@@ -11,10 +9,11 @@ export function requireAuth(
   from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
-  if (isAuthenticated()) {
-    if (!config.account) {
-      // getConfig()
-    }
+  const { user } = useAuth()
+  console.log(user.value);
+  
+  
+  if (user.value) {
     next()
   } else {
     next({ name: 'Login' })

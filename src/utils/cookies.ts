@@ -5,8 +5,6 @@ const TOKEN_KEY = 'auth_token'
 // Función para verificar si el usuario está autenticado
 export function isAuthenticated(): boolean {
   const token = Cookies.get(TOKEN_KEY)
-  console.log(token);
-  
   return !!token
 }
 

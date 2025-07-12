@@ -7,9 +7,7 @@ import { useConfig } from '../composables/useConfig'
 import type { Account } from '../interfaces'
 
 const { user } = useAuth()
-const { config, getConfig } = useConfig()
-
-getConfig()
+const { config } = useConfig()
 
 const { account } = toRefs(config)
 
@@ -26,7 +24,6 @@ const onCreateAccount = (account: Account) => {
 </script>
 
 <template>
-  
   <FullScreenOptions v-model="showOptions" />
 
   <div class="text-white">

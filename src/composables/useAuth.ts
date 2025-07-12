@@ -2,18 +2,13 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../utils/cookies'
 import { authService } from '../services/authService'
+import { useConfig } from './useConfig'
 
 const user = ref<any>(null)
 
-const startAuth = async () => {
-  const token = getAuthToken()
-  if (token) {
-    const response = await authService.getCurrentUser()
-    user.value = response.user
-  }
-}
-
-startAuth()
+const { getConfig } = useConfig()
+ // Fuera porque el estado es globa
+  getConfig()
 
 export function useAuth() {
   
@@ -33,6 +28,7 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     loading.value = true
     error.value = null
+
     try {
       const response = await authService.login({ email, password })
       
@@ -53,17 +49,30 @@ export function useAuth() {
 
   // Función de logout
   const logout = async () => {
-      removeAuthToken()
-      user.value = null
-      router.push({ name: 'Login' })
+      // removeAuthToken()
+      // user.value = null
+      // router.push({ name: 'Login' })
   }
 
   // Función para verificar el token al cargar la aplicación
   const checkAuth = async () => {
-    const logged = isAuthenticated() && user.value !== null
+    const token = getAuthToken()
+    
+    if (token) {
+      try {
+        const response = await authService.getCurrentUser()
 
-    if (!logged) {
-      logout() 
+        if (!response.success || !response.user) {
+          logout()
+        }
+        
+        user.value = response.user
+        // getConfig()
+          console.log(user.value);
+      } catch (err) {
+        console.error('Token verification error:', err)
+        logout()
+      }
     }
   }
 

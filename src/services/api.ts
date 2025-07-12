@@ -30,11 +30,13 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
-    // Si el token es inválido (401), eliminar el token
+    // Si el token es inválido (401), eliminar el token y redirigir al login
     if (error.response?.status === 401) {
       removeAuthToken()
-      // No redirigir automáticamente aquí para evitar reload
-      // La redirección se manejará en los componentes que usen la API
+      // Redirigir al login si estamos en el navegador
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }

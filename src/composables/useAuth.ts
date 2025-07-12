@@ -2,13 +2,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../utils/cookies'
 import { authService } from '../services/authService'
-import { useConfig } from './useConfig'
 
 const user = ref<any>(null)
 
-const { getConfig } = useConfig()
- // Fuera porque el estado es globa
-  getConfig()
 
 export function useAuth() {
   
@@ -19,7 +15,7 @@ export function useAuth() {
   // Computed property para verificar si está autenticado
   const authenticated = computed(() => {
     // return true
-    console.log(isAuthenticated(), user.value);
+    console.log(isAuthenticated(), 'AUTHENTICATED?');
     
     return isAuthenticated() && user.value !== null
   })

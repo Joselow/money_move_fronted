@@ -7,10 +7,10 @@ import { useConfig } from '../composables/useConfig'
 import type { Account } from '../interfaces'
 
 const { user } = useAuth()
-const { config } = useConfig()
+const { config, getConfig } = useConfig()
 
 const { account } = toRefs(config)
-
+getConfig()
 
 const showOptions = ref(false)
 const showModalFormAccount = ref(false)

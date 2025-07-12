@@ -35,7 +35,7 @@ api.interceptors.response.use(
       removeAuthToken()
       // Redirigir al login si estamos en el navegador
       if (typeof window !== 'undefined') {
-        window.location.href = '/login'
+        // window.location.href = '/login'
       }
     }
     return Promise.reject(error)

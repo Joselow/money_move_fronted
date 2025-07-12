@@ -41,7 +41,8 @@ export interface Transaction {
 
 // interfaces para la configuracion del usuario
 export interface UserConfig {
-    account: Account | null;
-    hasMultipleAccounts: boolean;
+    account: Account | null,
+    hasMultipleAccounts: boolean,
+    targetDate: string | null,
 }
 

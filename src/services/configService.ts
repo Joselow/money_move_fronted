@@ -7,6 +7,13 @@ const  getConfig = async (): Promise<UserConfig> =>{
     return response.data as UserConfig
 }
 
+// seleccionar cuenta
+const selectAccount = async (accountId: number) => {
+    const response = await api.put('/config/selected-account', { accountId })
+    return response.data
+}
+
 export default {
     getConfig,
+    selectAccount,
 }

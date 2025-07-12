@@ -24,6 +24,20 @@ const routes = [
     beforeEnter: requireGuest,
   },
   {
+    path: '/transaction/inflow',
+    name: 'Inflow',
+    component: () => import('../views/TransactionView.vue'),
+    meta: { requiresAuth: true },
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/transaction/outflow',
+    name: 'Outflow',
+    component: () => import('../views/TransactionView.vue'),
+    meta: { requiresAuth: true },
+    beforeEnter: requireAuth,
+  },
+  {
     path: '/list',
     name: 'List',
     component: () => import('../views/ListView.vue'),

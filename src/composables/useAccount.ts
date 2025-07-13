@@ -41,7 +41,7 @@ export function useAccount() {
     try {
       const result = await accountService.getAccounts()
       accounts.value = result
-
+      // accounts.value = [...accounts.value, ... result]
       return result
     } catch (err: any) {
       error.value = err?.message || 'Error al obtener las cuentas'

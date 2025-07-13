@@ -46,3 +46,17 @@ export interface UserConfig {
     targetDate: string | null,
 }
 
+
+// interface de categoria
+export interface Category {
+    id: number,
+    name: string,
+    color: string,
+    type: string,
+}
+
+export type TransactionType = '0' | '1';// '1' for income, '0' for expense
+
+
+
+

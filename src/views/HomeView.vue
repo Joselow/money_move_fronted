@@ -33,7 +33,6 @@ const changeDate = async () => {
 <template>
   <FullScreenOptions v-model="showOptions" />
 
-
   <div class="text-white">
     <div class=" w-full relative">
       <div>
@@ -52,7 +51,6 @@ const changeDate = async () => {
           </span>
         </h1>
         <input ref="dateInput" type="date" v-model="targetDate" @change="updateDate" class="hidden" />
-
       </div>
 
       <button class="absolute right-0 top-0" @click="showOptions = true">

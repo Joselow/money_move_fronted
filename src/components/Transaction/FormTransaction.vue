@@ -1,37 +1,59 @@
   
 <script setup lang="ts">
+import ScrollX from '@/commons/ScrollX.vue';
+import { TRANSACTION_TYPE } from '@/constants/transaction';
+import type { Category, TransactionType } from '@/interfaces';
 import { computed, ref } from 'vue'
   
 const props = defineProps<{
-    type: '0' | '1'
+    type: TransactionType,
+    categories: Category[],
 }>()
 
-const bg = computed(() => props.type == '0' ? 'bg-rose-500' : 'bg-green-500')
-const border = computed(() => props.type == '0' ? 'border-rose-500' : 'border-green-500')
+const bg = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'bg-rose-400' : 'bg-green-500')
+const border = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'border-rose-400' : 'border-green-500')
 
-const field1 = ref('')
-const field2 = ref('')
+const categoryId = ref<number | null>(null)
 const amount = ref<number | null>(null)
 const notes = ref('')
 
 const save = () => {
-    console.log('Field 1:', field1.value)
-    console.log('Field 2:', field2.value)
+    console.log('Field 1:', categoryId.value)
     console.log('Amount:', amount.value)
     console.log('Notes:', notes.value)
     alert('Saved!')
 }
+
+const selectCategory = async (id: number) => {
+    console.log(id);
+    
+    categoryId.value = id
+}
+
 </script>
   
 <template>
-    <div :class="`bg-black border-2 rounded-xl p-6 w-100 flex flex-col gap-4 ${border} `">
+    <div :class="` bg-black border-2 rounded-xl p-6  flex flex-col gap-4 ${border}`">
         <!-- Dos campos en fila -->
         <div class="flex gap-2">
-        <input
-            v-model="field1"
-            placeholder="Categoria"
-            :class="`flex-1 px-2 py-1 border-2 rounded-md bg-transparent  focus:outline-none ${border}`"
-        />
+            <ScrollX>
+                <template v-for="category in categories" :key="category.id">
+                    <!-- <div
+                        class="w-100 px-2 py-0 border-2 rounded-md"
+                    >
+                        {{ category.name }}
+                    </div> -->
+                    <div class="py-1 px-2 border-2 rounded-md  text-white"
+                        @click="selectCategory(category.id)"
+                        :class="{
+                            'bg-blue-900': categoryId === category.id,
+                            'bg-neutral-800': categoryId !== category.id
+                        }"
+                    >
+                        {{ category.name }}
+                    </div>
+                </template>
+            </ScrollX>
         </div>
     
         <!-- Campo numérico -->

@@ -3,9 +3,9 @@ import dayjs from "dayjs";
 
 export const currentDate = () => {
     const today = dayjs();
-    const formattedDate =  today.format('DD/MM/YYYY');
+    // const formattedDate =  today.format('DD/MM/YYYY');
 
-    return  formattedDate
+    return  today.format('YYYY-MM-DD')
 }
 
 export const formatDate = (date: string) => {

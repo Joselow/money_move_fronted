@@ -32,8 +32,8 @@ const onCreateAccount = (account: Account) => {
 }
 
 const onAccountSelected = (selectedAccount: Account) => {
-  open.value = false
-  showAccountsList.value = false
+  // open.value = false
+  // showAccountsList.value = false
 }
 
 const renderAccountsListModal = ref(false)
@@ -69,11 +69,12 @@ const openAccountsListModal = async () => {
 
   <!-- Modal para lista de cuentas -->
   <ModalBase v-if="renderAccountsListModal" v-model="showAccountsList" max-width="lg">
-    <AccountsList 
-      :accounts="accounts"
-      @account-selected="onAccountSelected"
-      @close="showAccountsList = false"
-    />
+    <div class="p-4">
+      <AccountsList 
+        :accounts="accounts"
+        @account-selected="onAccountSelected"
+      />
+    </div>
   </ModalBase>
 
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">

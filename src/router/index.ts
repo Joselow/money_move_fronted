@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { requireAuth, requireGuest } from '../guards/auth';
+import { TRANSACTION_TYPE } from '@/constants/transaction';
 
 const routes = [
   {
@@ -27,14 +28,14 @@ const routes = [
     path: '/transaction/inflow',
     name: 'Inflow',
     component: () => import('../views/TransactionView.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, type: TRANSACTION_TYPE.INFLOW },
     beforeEnter: requireAuth,
   },
   {
     path: '/transaction/outflow',
     name: 'Outflow',
     component: () => import('../views/TransactionView.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, type: TRANSACTION_TYPE.OUTFLOW },
     beforeEnter: requireAuth,
   },
   {

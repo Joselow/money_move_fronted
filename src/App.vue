@@ -11,8 +11,8 @@ checkAuth()
 </script>
 
 <template>
-  <div class="w-full min-h-screen ">
-    <main class="px-6 py-8">
+  <div class="w-full min-h-screen flex justify-center px-6 py-8">
+    <main class="w-12/12 md:w-6/12 2xl:w-8/12">
         <router-view />
       <!-- <NavBar v-if="authenticated" /> -->
     </main>

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+
+import FullScreenLoader from '../../commons/FullScreenLoader.vue'
+import CommonLoader from '@/commons/CommonLoader.vue'
+import ScrollX from '@/commons/ScrollX.vue'
+
 import { useAccount } from '../../composables/useAccount'
 import { useConfig } from '../../composables/useConfig'
-import FullScreenLoader from '../../commons/FullScreenLoader.vue'
+
 import type { Account } from '../../interfaces'
 
 const { loadingAccounts, error } = useAccount()
-const { config, selectAccount } = useConfig()
-
-const currentPage = ref(1)
-const itemsPerPage = ref(3)
-const scrollContainer = ref<HTMLElement>()
+const { config, selectAccount, loading } = useConfig()
 
 const props = defineProps<{
   accounts: Account[]
@@ -18,77 +19,22 @@ const props = defineProps<{
 
 const emit = defineEmits(['accountSelected', 'close'])
 
-const paginatedAccounts = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return props.accounts.slice(start, end)
-})
-
-const totalPages = computed(() => {
-  return Math.ceil(props.accounts.length / itemsPerPage.value)
-})
-
-const canScrollLeft = computed(() => currentPage.value > 1)
-const canScrollRight = computed(() => currentPage.value < totalPages.value)
-
 const handleAccountSelect = (account: Account) => {
   selectAccount(account)
   emit('accountSelected', account)
-  emit('close')
 }
 
-const scrollLeft = () => {
-  if (canScrollLeft.value) {
-    currentPage.value--
-    scrollToPage()
-  }
-}
-
-const scrollRight = () => {
-  if (canScrollRight.value) {
-    currentPage.value++
-    scrollToPage()
-  }
-}
-
-const scrollToPage = () => {
-  if (scrollContainer.value) {
-    const container = scrollContainer.value
-    const cardWidth = container.scrollWidth / itemsPerPage.value
-    const scrollPosition = (currentPage.value - 1) * cardWidth
-    container.scrollTo({
-      left: scrollPosition,
-      behavior: 'smooth'
-    })
-  }
-}
-
-const handleScroll = () => {
-  if (scrollContainer.value) {
-    const container = scrollContainer.value
-    const cardWidth = container.scrollWidth / itemsPerPage.value
-    const currentScroll = container.scrollLeft
-    const newPage = Math.round(currentScroll / cardWidth) + 1
-    if (newPage !== currentPage.value && newPage >= 1 && newPage <= totalPages.value) {
-      currentPage.value = newPage
-    }
-  }
-}
 </script>
 
 <template>
-  <div class="w-full max-w-4xl mx-auto p-6">
+  <CommonLoader v-if="loading"/>
+  
+  <div class="w-full max-w-4xl mx-auto">
     <FullScreenLoader v-if="loadingAccounts" />
     
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-white"><i class="pi pi-file-edit"></i> Selecciona la cuenta</h2>
-      <button 
-        @click="$emit('close')"
-        class="text-gray-400 hover:text-white transition-colors"
-      >
-        <i class="pi pi-times text-xl" />
-      </button>
+      <h2 class="text-xl text-white"><i class="pi pi-file-edit"></i> Selecciona la cuenta</h2>
     </div>
 
     <!-- Error message -->
@@ -98,38 +44,14 @@ const handleScroll = () => {
 
     <!-- Accounts container -->
     <div class="relative">
-      <!-- Scroll left button -->
-      <button
-        v-if="canScrollLeft"
-        @click="scrollLeft"
-        class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-transparent hover:bg-pink-200/10 text-pink-400 p-2 rounded-full shadow-lg transition-all duration-200 border-2 border-pink-400"
-        style="width: 48px; height: 48px; font-size: 2rem; display: flex; align-items: center; justify-content: center;"
-      >
-        <span style="font-size: 2.5rem;">&#8592;</span>
-      </button>
-
-      <!-- Scroll right button -->
-      <button
-        v-if="canScrollRight"
-        @click="scrollRight"
-        class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-transparent hover:bg-pink-200/10 text-pink-400 p-2 rounded-full shadow-lg transition-all duration-200 border-2 border-pink-400"
-        style="width: 48px; height: 48px; font-size: 2rem; display: flex; align-items: center; justify-content: center;"
-      >
-        <span style="font-size: 2.5rem;">&#8594;</span>
-      </button>
 
       <!-- Accounts scroll container -->
-      <div
-        ref="scrollContainer"
-        @scroll="handleScroll"
-        class="flex gap-4 justify-center overflow-x-auto scrollbar-hide pb-4"
-        style="scroll-snap-type: x mandatory;"
-      >
+      <ScrollX>
         <div
-          v-for="account in paginatedAccounts"
-          :key="account.id"
+          v-for="(account, index) in props.accounts"
+          :key="index"
           @click="handleAccountSelect(account)"
-          class=" flex-shrink-0 w-80 bg-gray-800 border-2 rounded-lg p-6 cursor-pointer hover:bg-gray-700 transition-all duration-200"
+          class=" flex-shrink-0 w-76 bg-gray-800 border-2 rounded-lg p-6 cursor-pointer hover:bg-gray-700 transition-all duration-200"
           :class="[config.account?.id === account.id ? 'bg-indigo-900/20' : '']"
           style="scroll-snap-align: start;"
         >
@@ -175,39 +97,7 @@ const handleScroll = () => {
           </div>
 
         </div>
-      </div>
-    </div>
-
-    <!-- Pagination indicators -->
-    <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-6">
-      <button
-        @click="scrollLeft"
-        :disabled="!canScrollLeft"
-        class="p-2 rounded-full transition-colors border-2 border-pink-400 text-pink-400 bg-transparent hover:bg-pink-200/10"
-        :class="canScrollLeft ? '' : 'opacity-50 cursor-not-allowed'"
-        style="width: 32px; height: 32px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;"
-      >
-        <span style="font-size: 1.5rem;">&#8592;</span>
-      </button>
-      
-      <div class="flex space-x-1">
-        <div
-          v-for="page in totalPages"
-          :key="page"
-          class="w-2 h-2 rounded-full transition-colors"
-          :class="page === currentPage ? 'bg-pink-400' : 'bg-gray-600'"
-        />
-      </div>
-      
-      <button
-        @click="scrollRight"
-        :disabled="!canScrollRight"
-        class="p-2 rounded-full transition-colors border-2 border-pink-400 text-pink-400 bg-transparent hover:bg-pink-200/10"
-        :class="canScrollRight ? '' : 'opacity-50 cursor-not-allowed'"
-        style="width: 32px; height: 32px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;"
-      >
-        <span style="font-size: 1.5rem;">&#8594;</span>
-      </button>
+      </ScrollX>
     </div>
 
     <!-- Empty state -->

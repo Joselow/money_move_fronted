@@ -1,6 +1,6 @@
 <template>
      <div
-        class="flex gap-4 overflow-x-auto"
+        class="flex  overflow-x-auto pb-3 gap-4"
         style="scroll-snap-type: x mandatory;"
       >
         <slot></slot>

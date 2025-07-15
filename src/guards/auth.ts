@@ -1,4 +1,4 @@
-import { isAuthenticated } from '@/utils/cookies'
+import { isAuthenticated } from '@/helpers/cookies'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 // Guard para rutas protegidas

@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../utils/cookies'
+import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../helpers/cookies'
 import { authService } from '../services/authService'
 
 const user = ref<any>(null)

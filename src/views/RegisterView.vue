@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { setAuthToken } from '../utils/cookies'
+import { setAuthToken } from '../helpers/cookies'
 import { authService } from '../services/authService'
 
 const name = ref('')

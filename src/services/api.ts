@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { getAuthToken, removeAuthToken } from '../utils/cookies'
+import { getAuthToken, removeAuthToken } from '../helpers/cookies'
+import { handleErrors } from '@/helpers/handleErrors'
 
 // Crear instancia de axios con configuración base
 const api = axios.create({
@@ -31,13 +32,10 @@ api.interceptors.response.use(
   },
   (error) => {
     // Si el token es inválido (401), eliminar el token y redirigir al login
-    if (error.response?.status === 401) {
-      removeAuthToken()
-      // Redirigir al login si estamos en el navegador
-      if (typeof window !== 'undefined') {
-        // window.location.href = '/login'
-      }
-    }
+
+    const status = error.response?.status
+
+    handleErrors(status)
     return Promise.reject(error)
   }
 )

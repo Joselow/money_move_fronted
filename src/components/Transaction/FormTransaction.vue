@@ -6,8 +6,14 @@ import ScrollX from '@/commons/ScrollX.vue';
 import { useConfig } from '@/composables/useConfig';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 import type { Category, TransactionType } from '@/interfaces';
+import { useTransaction } from '@/composables/useTransaction';
+import { useRouter } from 'vue-router';
+
+const { createTransaction } = useTransaction()
 
 const { config } = useConfig()
+
+const router = useRouter()
 
 const props = defineProps<{
     type: TransactionType,
@@ -27,11 +33,22 @@ const categoryId = ref<number | null>(null)
 const amount = ref<number | null>(null)
 const notes = ref('')
 
-const save = () => {
-    console.log('Field 1:', categoryId.value)
-    console.log('Amount:', amount.value)
-    console.log('Notes:', notes.value)
-    alert('Saved!')
+const save = async() => {
+    if (!categoryId.value || !amount.value) {
+        return
+    }
+    const { success } = await createTransaction({
+        name: 'test',
+        type: props.type,
+        amount: Number(amount.value),
+        description: notes.value,
+        accountId: config.account?.id,
+        categoryId: categoryId.value
+    })
+    
+    if (success) {
+        router.push({ name: 'Home' })
+    }
 }
 
 const selectCategory = async (id: number) => {
@@ -54,7 +71,7 @@ const selectCategory = async (id: number) => {
                             'border-neutral-700': categoryId !== category.id
                         }"
                         :style="{
-                            'border-color': categoryId === category.id ? category.color : '',
+                            'border-color': category.color,
                             'background-color': categoryId === category.id ? `${category.color}40` : ''
                         }"
                     >

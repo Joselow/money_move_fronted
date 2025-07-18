@@ -28,8 +28,8 @@ export interface Category {
 export interface Transaction {
     id: number;
     name: string;
-    type: string; // '1' for income, '2' for expense
-    amount: string; // decimal as string
+    type: TransactionType; // '1' for income, '2' for expense
+    amount: number; 
     description?: string | null;
     date: Date;
     userId: number;
@@ -37,7 +37,7 @@ export interface Transaction {
     categoryId: number;
     createdAt: Date;
     updatedAt: Date;
-}       
+}    
 
 // interfaces para la configuracion del usuario
 export interface UserConfig {
@@ -52,7 +52,7 @@ export interface Category {
     id: number,
     name: string,
     color: string,
-    type: string,
+    type: TransactionType,
 }
 
 export type TransactionType = '0' | '1';// '1' for income, '0' for expense

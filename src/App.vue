@@ -5,7 +5,6 @@ import { Toaster } from 'vue-sonner'
 const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
 
 const { checkAuth, authenticated } = useAuth()
-console.log('hecho');
 
 checkAuth()  
 </script>

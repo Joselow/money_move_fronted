@@ -6,17 +6,21 @@ import { useAuth } from '../composables/useAuth'
 import { useConfig } from '../composables/useConfig'
 import { useDate } from '@/composables/useDate'
 import { formatDate } from '@/utils/date'
+import { useTransaction } from '@/composables/useTransaction'
 
 const { user } = useAuth()
 const { config, getConfig } = useConfig()
 
+const { getTotalTransactions, totalTransaction } = useTransaction()
+
 const { targetDate, updateTargetDate, dateInput } = useDate()
 
 const { account } = toRefs(config)
-getConfig()
+// getConfig()
 
 const showOptions = ref(false)
 
+getTotalTransactions()
 
 const updateDate = async (e) => {
   console.log(e);
@@ -78,7 +82,7 @@ const changeDate = async () => {
 
         <div
           class="border-2 border-rose-400 rounded-lg w-full h-40 flex items-center justify-center text-3xl text-rose-300">
-          - {{ account?.currency }} 900.00
+          - {{ account?.currency }} {{ totalTransaction }}
         </div>
       </router-link>
 

@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../helpers/cookies'
+import { setAuthToken, getAuthToken, isAuthenticated } from '../helpers/cookies'
 import { authService } from '../services/authService'
 
 const user = ref<any>(null)
@@ -63,7 +63,10 @@ export function useAuth() {
         }
         
         user.value = response.user
-        // getConfig()
+
+        // if (!config.account) {
+        //   getConfig()
+        // }
           console.log(user.value);
       } catch (err) {
         console.error('Token verification error:', err)

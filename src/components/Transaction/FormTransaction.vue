@@ -4,12 +4,16 @@ import { computed, ref } from 'vue'
 import ScrollX from '@/commons/ScrollX.vue';
 
 import { useConfig } from '@/composables/useConfig';
-import { TRANSACTION_TYPE } from '@/constants/transaction';
-import type { Category, TransactionType } from '@/interfaces';
 import { useTransaction } from '@/composables/useTransaction';
 import { useRouter } from 'vue-router';
 
+import { TRANSACTION_TYPE } from '@/constants/transaction';
+import type { Category, TransactionType } from '@/interfaces';
+
+import { useDate } from '@/composables/useDate';
+
 const { createTransaction } = useTransaction()
+const { targetDate } = useDate()
 
 const { config } = useConfig()
 
@@ -19,11 +23,6 @@ const props = defineProps<{
     type: TransactionType,
     categories: Category[],
 }>()
-
-// Supongo que tienes una variable global o un prop para el ícono de la moneda.
-// Reemplaza 'tu_variable_del_icono' con el nombre de tu variable global.
-const currencyIcon = '💵'; // Ejemplo: 💵, €, $
-
 
 const bg = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'bg-rose-400' : 'bg-green-500')
 const border = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'border-rose-400' : 'border-green-500')
@@ -43,7 +42,8 @@ const save = async() => {
         amount: Number(amount.value),
         description: notes.value,
         accountId: config.account?.id,
-        categoryId: categoryId.value
+        categoryId: categoryId.value,
+        date: targetDate.value
     })
     
     if (success) {
@@ -61,10 +61,10 @@ const selectCategory = async (id: number) => {
 <template>
     <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl p-8 flex flex-col gap-6 shadow-2xl ${border}`">
         <div>
-            <ScrollX class="gap-3">
+            <ScrollX class="mt-1">
                 <template v-for="category in categories" :key="category.id">
                     <div
-                        class="px-6 py-2 border-2 rounded-full text-white cursor-pointer whitespace-nowrap transition-all duration-300 transform hover:scale-105"
+                        class="mt-1 px-6 py-2 border-2 rounded-full text-white cursor-pointer whitespace-nowrap transition-all duration-300 transform hover:scale-105"
                         @click="selectCategory(category.id)"
                         :class="{
                             'ring-2 ring-offset-2 ring-offset-neutral-900': categoryId === category.id,

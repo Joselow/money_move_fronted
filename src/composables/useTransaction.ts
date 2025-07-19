@@ -2,13 +2,18 @@ import { ref } from 'vue'
 import { createTransactionRq , getTotalTransactionsRq, getTransactionsRq } from '../services/transactionService'
 import type { Transaction } from '../interfaces'
 import { toast } from 'vue-sonner'
+import { useDate } from './useDate'
+
+const { targetDate } = useDate()
+
+const totalTransaction = ref(0)
 
 export function useTransaction() {
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const transactions = ref<Transaction[]>([])
   const loadingTransactions = ref(false)
-  const totalTransaction = ref(0)
 
   const createTransaction = async (data: Partial<Transaction>) => {
     loading.value = true
@@ -42,12 +47,21 @@ export function useTransaction() {
     }
   }
 
-  const getTotalTransactions = async ({ date }: { date?: string } = {}) => {
+  const getTotalTransactions = async ({ date }: { date?: string | null } = {}) => {
+    console.log({targetDate : targetDate.value});
+
     loading.value = true
     error.value = null
     try {
-      const result = await getTotalTransactionsRq({ date })
+      console.log({date});
+      
+      const dateValue = date ?? targetDate.value
+      
+
+      const result = await getTotalTransactionsRq({ date: dateValue })
       totalTransaction.value = result.total
+      console.log(totalTransaction.value);
+      
       return result
     } catch (err: any) {
       error.value = err?.message || 'Error al obtener las cuentas'

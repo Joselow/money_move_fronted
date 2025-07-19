@@ -11,7 +11,7 @@ export const getTransactionsRq = async ({ date }: { date?: string }) => {
     return response.data
 }
 
-export const getTotalTransactionsRq = async ({ date }: { date?: string }) => {
+export const getTotalTransactionsRq = async ({ date }: { date?: string | null }) => {
     const response = await api.get<{ total: number, type: TransactionType }>('/transactions/total', { params: { date } })
     return response.data
 }

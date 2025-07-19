@@ -31,11 +31,6 @@ const onCreateAccount = (account: Account) => {
   showModalFormAccount.value = false
 }
 
-const onAccountSelected = (selectedAccount: Account) => {
-  // open.value = false
-  // showAccountsList.value = false
-}
-
 const renderAccountsListModal = ref(false)
 
 const openAccountsListModal = async () => {
@@ -72,7 +67,6 @@ const openAccountsListModal = async () => {
     <div class="p-4">
       <AccountsList 
         :accounts="accounts"
-        @account-selected="onAccountSelected"
       />
     </div>
   </ModalBase>

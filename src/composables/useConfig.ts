@@ -26,8 +26,15 @@ export const useConfig = () => {
             loading.value = true
             await configService.selectAccount(account.id);
             config.account = account;
+
+            return {
+                success: true
+            }
         } catch (err: any) {
-            throw err;
+            console.log(err)
+            return {
+                success: false
+            }
         } finally { loading.value = false }
     }
 

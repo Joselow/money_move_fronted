@@ -5,8 +5,7 @@ import { currentDate } from "@/utils/date";
 
 const  { config } = useConfig()
 
-export function useDate () {
-
+export function useDate () {    
     const dateInput = ref<HTMLInputElement | null>(null)
 
     const updateTargetDate = async (date: string) => {

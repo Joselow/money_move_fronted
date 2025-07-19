@@ -9,25 +9,28 @@ import { useAccount } from '../../composables/useAccount'
 import { useConfig } from '../../composables/useConfig'
 
 import type { Account } from '../../interfaces'
+import { useTransaction } from '@/composables/useTransaction'
 
 const { loadingAccounts, error } = useAccount()
 const { config, selectAccount, loading } = useConfig()
+
+const { getTotalTransactions, loading: loadingTotal } = useTransaction()
 
 const props = defineProps<{
   accounts: Account[]
 }>()
 
-const emit = defineEmits(['accountSelected', 'close'])
 
-const handleAccountSelect = (account: Account) => {
-  selectAccount(account)
-  emit('accountSelected', account)
+const handleAccountSelect = async (account: Account) => {
+  const { success } = await selectAccount(account)
+  if (!success) return 
+  getTotalTransactions()
 }
 
 </script>
 
 <template>
-  <CommonLoader v-if="loading"/>
+  <CommonLoader v-if="loading || loadingTotal"/>
   
   <div class="w-full max-w-4xl mx-auto">
     <FullScreenLoader v-if="loadingAccounts" />

@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { ref, toRefs } from 'vue'
 import FullScreenOptions from '../components/FullScreenOptions.vue'
+import CommonLoader from '@/commons/CommonLoader.vue'
 
 import { useAuth } from '../composables/useAuth'
 import { useConfig } from '../composables/useConfig'
 import { useDate } from '@/composables/useDate'
-import { formatDate } from '@/utils/date'
 import { useTransaction } from '@/composables/useTransaction'
+import { useStyles } from '@/composables/useStyles'
+
+import { formatDate } from '@/utils/date'
+import { formatCurrency } from '@/utils/format'
 
 const { user } = useAuth()
 const { config, getConfig } = useConfig()
 
-const { getTotalTransactions, totalTransaction } = useTransaction()
+const { getTotalTransactions, totalTransaction, loading } = useTransaction()
+const { styles } = useStyles({ total: totalTransaction })
 
-const { targetDate, updateTargetDate, dateInput } = useDate()
+const { targetDate, updateTargetDate, dateInput, resetDate } = useDate()
 
 const { account } = toRefs(config)
 // getConfig()
@@ -22,10 +27,22 @@ const showOptions = ref(false)
 
 getTotalTransactions()
 
-const updateDate = async (e) => {
-  console.log(e);
+const updateDate = async (e: Event) => {
+  const target = e.target as HTMLInputElement
 
-  updateTargetDate(e.target.value)
+  console.log(target.value);
+  
+  if (!target.value) {
+    console.log('poerque resetea');
+    
+    // resetDate()
+  }
+
+  updateTargetDate(target.value)
+  console.log(targetDate.value);
+  getTotalTransactions()
+  console.log(targetDate.value);
+
 }
 const changeDate = async () => {
   if (!dateInput.value) return
@@ -35,6 +52,8 @@ const changeDate = async () => {
 </script>
 
 <template>
+  <CommonLoader v-if="loading" />
+
   <FullScreenOptions v-model="showOptions" />
 
   <div class="text-white">
@@ -79,10 +98,11 @@ const changeDate = async () => {
     <div class="mt-2 flex flex-col justify-evenly space-y-4 relative">
       <!-- Panel superior (Balance o resumen) -->
       <router-link :to="{ name: 'List' }">
-
         <div
-          class="border-2 border-rose-400 rounded-lg w-full h-40 flex items-center justify-center text-3xl text-rose-300">
-          - {{ account?.currency }} {{ totalTransaction }}
+          class="border-2 rounded-lg w-full h-40 flex items-center justify-center text-5xl "
+          :class="`${styles.border} ${styles.color}`"
+          >
+            {{ account?.currency }} {{ formatCurrency(totalTransaction) }}
         </div>
       </router-link>
 

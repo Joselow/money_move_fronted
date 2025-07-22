@@ -1,23 +1,26 @@
-import { ref, toRef } from "vue";
+import { ref } from "vue";
 
 import {  useConfig } from "./useConfig";
 import { currentDate } from "@/utils/date";
 
 const  { config } = useConfig()
 
+const targetDate = ref(currentDate())
+
 export function useDate () {    
     const dateInput = ref<HTMLInputElement | null>(null)
 
     const updateTargetDate = async (date: string) => {
-        config.targetDate = date
+        console.log('ACTUALIZA', date)    ;
+        targetDate.value = date
     }
 
     const resetDate = async () => {
-        config.targetDate = currentDate()
+        targetDate.value = currentDate()
     }
 
     return {
-        targetDate: toRef(config.targetDate),
+        targetDate,
         dateInput,
         updateTargetDate,
         resetDate

@@ -43,7 +43,6 @@ export interface Transaction {
 export interface UserConfig {
     account: Account | null,
     hasMultipleAccounts: boolean,
-    targetDate: string | null,
 }
 
 

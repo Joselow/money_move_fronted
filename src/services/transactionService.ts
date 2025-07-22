@@ -6,8 +6,13 @@ export const getTransactionRq = async (id: number) => {
     return response.data
 }
 
-export const getTransactionsRq = async ({ date }: { date?: string }) => {
-    const response = await api.get<Transaction[]>('/transactions', { params: { date } })
+export const getTransactionsRq = async (params: {
+    startDate: string, 
+    endDate: string | null, 
+    categoryId: number | null, 
+    type: TransactionType | null 
+}) => {
+    const response = await api.get<Transaction[]>('/transactions', { params })
     return response.data
 }
 

@@ -5,12 +5,10 @@ import configService from "../services/configService.js";
 import type { UserConfig } from "@/interfaces/index.js";
 import type { Account } from "@/interfaces/index.js";
 
-import { currentDate } from "@/utils/date.js";
 
 const config: UserConfig = reactive({
     account: null,
     hasMultipleAccounts: false,
-    targetDate: currentDate()
 }); 
 
 export const useConfig = () => {

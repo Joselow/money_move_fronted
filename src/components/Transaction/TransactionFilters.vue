@@ -3,20 +3,16 @@ import { reactive, watch } from 'vue'
 
 import ScrollX from '@/commons/ScrollX.vue'
 import type { Category, TransactionType } from '@/interfaces'
+import type { TransactionFilters } from '@/composables/useTransaction'
 
 interface Props {
   categories: Category[]
-  filters: {
-    startDate: string
-    endDate: string
-    categoryId: number | null
-    type: TransactionType | null
-  }
+  filters: TransactionFilters
 }
 
 interface Emits {
-    ['update:filters']: [filters: Partial<Props['filters']>],
-    ['clear-filters']: [void]
+    updateFilters: [filters: Partial<Props['filters']>],
+    clearFilters: [void]
 }
 
 const props = defineProps<Props>()
@@ -32,11 +28,13 @@ const localFilters = reactive({
 
 // Watch for external filter changes
 watch(() => props.filters, (newFilters) => {
+  console.log('despes actualiza');
+  
   Object.assign(localFilters, newFilters)
 }, { deep: true })
 
 const updateFilters = () => {
-  emit('update:filters', { ...localFilters })
+  emit('updateFilters', { ...localFilters })
 }
 
 const selectType = (type: TransactionType | null) => {
@@ -50,11 +48,7 @@ const selectCategory = (categoryId: number | null) => {
 }
 
 const clearAllFilters = () => {
-  localFilters.startDate = ''
-  localFilters.endDate = ''
-  localFilters.categoryId = null
-  localFilters.type = null
-  emit('clear-filters')
+  emit('clearFilters')
 }
 </script>
 
@@ -63,7 +57,7 @@ const clearAllFilters = () => {
     <!-- Date Range Filters -->
     <div class="space-y-2">
       <label class="text-sm font-medium text-neutral-300">Rango de Fechas</label>
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-wrap">
         <input
           v-model="localFilters.startDate"
           type="date"
@@ -123,7 +117,7 @@ const clearAllFilters = () => {
     <div class="space-y-2">
       <label class="text-sm font-medium text-neutral-300">Categorías</label>
       <ScrollX class="mt-1">
-        <div class="flex gap-2">
+        <div class="flex gap-2 mt-2">
           <div
             @click="selectCategory(null)"
             :class="[

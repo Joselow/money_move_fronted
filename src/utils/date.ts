@@ -12,3 +12,9 @@ export const formatDate = (date: string) => {
     const formattedDate =  dayjs(date).format('DD/MM/YYYY');
     return  formattedDate
 }
+
+// fin de mes
+export const endOfMonth = () => {
+    const today = dayjs();
+    return today.endOf('month').format('YYYY-MM-DD')
+}

@@ -41,7 +41,7 @@ const routes = [
   {
     path: '/list',
     name: 'List',
-    component: () => import('../views/ListView.vue'),
+    component: () => import('../views/TransactionHistoryView.vue'),
     meta: { requiresAuth: true },
     beforeEnter: requireAuth,
   },

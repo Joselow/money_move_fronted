@@ -37,7 +37,6 @@ const save = async() => {
         return
     }
     const { success } = await createTransaction({
-        name: 'test',
         type: props.type,
         amount: Number(amount.value),
         description: notes.value,
@@ -47,19 +46,24 @@ const save = async() => {
     })
     
     if (success) {
-        router.push({ name: 'Home' })
+        clearForm()
     }
+}
+const clearForm = async () => {
+    categoryId.value = null
+    amount.value = null
+    notes.value = ''
 }
 
 const selectCategory = async (id: number) => {
     console.log(id);
-
+    notes.value = props.categories.find((category: Category) => category.id === id)?.name || ''
     categoryId.value = id
 }
 </script>
 
 <template>
-    <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl p-8 flex flex-col gap-6 shadow-2xl ${border}`">
+    <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl py-2 px-4 flex flex-col gap-6 shadow-2xl ${border}`">
         <div>
             <ScrollX class="mt-1">
                 <template v-for="category in categories" :key="category.id">
@@ -111,7 +115,7 @@ const selectCategory = async (id: number) => {
                 class="flex-1 py-4 text-white font-bold rounded-xl transition-colors duration-300"
                 :class="`border-2 ${border} ${bg}`"
             >
-                SAVE
+                Guardar
             </button>
         </div>
     </div>

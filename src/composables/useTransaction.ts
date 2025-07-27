@@ -3,7 +3,7 @@ import { createTransactionRq , getTotalTransactionsRq, getTransactionsRq, } from
 import type { Transaction, TransactionType } from '../interfaces'
 import { toast } from 'vue-sonner'
 import { useDate } from './useDate'
-import { currentDate, endOfMonth } from '@/utils/date'
+import { currentDate } from '@/utils/date'
 
 const { targetDate } = useDate()
 
@@ -11,8 +11,10 @@ const totalTransaction = ref(0)
 
 // Reactive filters state
 const filters = reactive({
+  limit: 15 as number | undefined,
+  offset: 0 as number | undefined,
   startDate: currentDate(),
-  endDate: endOfMonth(),
+  endDate: null as string | null,
   categoryId: null as number | null,
   type: null as TransactionType | null
 })
@@ -46,9 +48,11 @@ export function useTransaction() {
   const getTransactions = async () => {
     loadingTransactions.value = true
     error.value = null
+
     try {
       const result = await getTransactionsRq({...filters})
-      transactions.value = result
+      transactions.value = [...transactions.value, ...result]
+
       return result
     } catch (err: any) {
       error.value = err?.message || 'Error al obtener las cuentas'
@@ -66,7 +70,7 @@ export function useTransaction() {
   // Function to clear filters
   const clearFilters = () => {
     filters.startDate = currentDate()
-    filters.endDate = endOfMonth()
+    filters.endDate = null
     filters.categoryId = null
     filters.type = null
   }

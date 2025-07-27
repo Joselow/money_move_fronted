@@ -32,17 +32,12 @@ const updateDate = async (e: Event) => {
 
   console.log(target.value);
   
-  if (!target.value) {
-    console.log('poerque resetea');
-    
-    // resetDate()
+  if (target.value) {
+    updateTargetDate(target.value)
+  } else {
+    resetDate()
   }
-
-  updateTargetDate(target.value)
-  console.log(targetDate.value);
   getTotalTransactions()
-  console.log(targetDate.value);
-
 }
 const changeDate = async () => {
   if (!dateInput.value) return
@@ -99,7 +94,7 @@ const changeDate = async () => {
       <!-- Panel superior (Balance o resumen) -->
       <router-link :to="{ name: 'List' }">
         <div
-          class="border-2 rounded-lg w-full h-40 flex items-center justify-center text-5xl "
+          class="border-2 rounded-2xl w-full h-40 flex items-center justify-center text-5xl "
           :class="`${styles.border} ${styles.color}`"
           >
             {{ account?.currency }} {{ formatCurrency(totalTransaction) }}
@@ -109,8 +104,11 @@ const changeDate = async () => {
 
       <router-link :to="{ name: 'Outflow' }">
         <!-- Contenedor intermedio -->
-        <div class="border-2 border-rose-400 rounded-lg w-full h-24 flex items-center justify-center ">
-          <i class="pi pi-angle-down text-2xl me-4 text-red-400 animate-bounce"></i>
+        <div class="border-2 border-rose-400 rounded-2xl w-full h-24 flex items-center justify-center ">
+
+          <!-- inviertelo como esejo verticalmente   -->
+          <i class="pi pi-arrow-up-right
+ text-2xl transform rotate-180 me-4 text-red-400 animate-bounce"></i>
           <svg class="animate-pulse" height="64px" width="64px" version="1.1" id="Layer_1"
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
             xml:space="preserve" fill="#000000">
@@ -148,8 +146,10 @@ const changeDate = async () => {
 
         <!-- Sección inferior (Agregar transacción) -->
         <div
-          class="border-2 border-green-500 rounded-lg w-full h-16 flex items-center justify-center cursor-pointer hover:bg-green-800 transition">
-          <i class="pi pi-angle-up text-2xl me-6 text-green-400 animate-pulse"></i>
+          class="border-2 border-green-500 rounded-2xl w-full h-16 flex items-center justify-center cursor-pointer hover:bg-green-800 transition">
+          <i class="pi 
+pi-arrow-up-right
+ text-2xl me-6 text-green-400 animate-pulse"></i>
 
           <svg height="40px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#000000">

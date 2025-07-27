@@ -18,6 +18,8 @@ getCategories(type)
 </script>
   
 <template>
+    <h1 class="text-xl font-bold tracking-wider mb-3 text-white">Registrar {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
+
     <div class="">
        <FormTransaction 
         :type="type"

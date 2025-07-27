@@ -8,7 +8,7 @@ export function useCategory() {
     const categories = ref<Category[]>([])
     const loadingCategories = ref(false)
   
-    const getCategories = async (type: TransactionType) => {
+    const getCategories = async (type?: TransactionType) => {
       loading.value = true
       error.value = null
       try {

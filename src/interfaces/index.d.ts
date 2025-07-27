@@ -24,14 +24,28 @@ export interface Category {
     color: string; // hex color, e.g. "#FFFFFF"
     type: string;  // '1' for income, '2' for expense
 }
+// export interface Transaction {
+//     id: number;
+//     name: string;
+//     type: TransactionType; // Asumiendo que '0', '1', '2' son posibles valores
+//     amount: string; // Es string en el JSON, no number
+//     description?: string | null;
+//     date: string;
+//     createdAt: string; // Si viene como ISO string
+//     updatedAt: string;
+//     accountName: string;
+//     accountCurrency: string;
+//     categoryName: string;
+//     categoryColor: string;
+//     categoryType: '0' | '1' | '2'; // Según su sistema de categorías
+//   }
 
 export interface Transaction {
     id: number;
-    name: string;
     type: TransactionType; // '1' for income, '2' for expense
     amount: number; 
     description?: string | null;
-    date?: string | null;
+    date: string;
     userId: number;
     accountId: number;
     categoryId: number;

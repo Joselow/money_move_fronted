@@ -13,8 +13,12 @@ import { currentDate, formatDate, formatOnlyHours, formatFullDateText } from '@/
 import { useDate } from '@/composables/useDate';
 import { useCategory } from '@/composables/useCategory';
 import { useTransaction } from '@/composables/useTransaction';
+import { useConfig   } from '@/composables/useConfig';
+import router from '@/router';
+import type { TransactionItem, TransactionType } from '@/interfaces';
 
-const { targetDate, updateTargetDate, resetDate } = useDate()
+const { targetDate, updateTargetDate, resetDate, } = useDate()
+const { config } = useConfig()
 
 const { categories, getCategories } = useCategory()
 const { transactions, getTransactions, filters, clearFilters, loadingTransactions } = useTransaction()
@@ -80,6 +84,22 @@ const handleLoadMore = () => {
     }
     getTransactions()
 }
+
+const editTransaction = (transaction: TransactionItem) => {
+    localStorage.setItem('LOCAL_STORAGE_SAVE_TRANSAC_ITEM', JSON.stringify(transaction))
+
+    if (transaction.type === TRANSACTION_TYPE.INFLOW) {
+        router.push({ name: 'Inflow', params: { id: transaction.id } })
+    }
+    else if (transaction.type === TRANSACTION_TYPE.OUTFLOW) {
+        router.push({ name: 'Outflow', params: { id: transaction.id } })
+    } 
+    else {
+        console.log(transaction.type);
+        
+        alert(transaction.type)
+    }
+}
 </script>
 
 <template>
@@ -92,7 +112,7 @@ const handleLoadMore = () => {
             <h1 class="text-xl font-bold tracking-wider mb-2 text-white">Transacciones</h1>
             
             <!-- Date Header Card -->
-            <div class="mb-4 shadow-lg rounded-xl p-2 px-5 text-white shadow-lg">
+            <div class="mb-4 shadow-lg rounded-xl py-2 text-white shadow-lg">
                 <div class="flex justify-between items-center">
                     <div class="leading-none">
                         <input ref="dateInput" class="text-sm hidden" type="date" v-model="filters.startDate"
@@ -100,18 +120,16 @@ const handleLoadMore = () => {
                         >
                         <p>
                             {{ formatFullDateText(filters.startDate) }}
-                            <span class="cursor-pointer hover:bg-neutral-600 ml-1 bg-neutral-700 rounded-full px-2 py-1"
+                            <span class="text-sm cursor-pointer hover:bg-neutral-600 ml-1 bg-neutral-700/50 rounded-full px-2 py-1"
                                 @click="changeDate"
                             >
                                 <i class="pi pi-pencil"></i>
                             </span>
                         </p>
                     </div>
-                    <div class="bg-white/20 rounded-full p-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                    </div>
+                    <!-- <div class="rounded-full p-2">
+                        <i class="pi pi-cog"></i>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -142,7 +160,7 @@ const handleLoadMore = () => {
                                 class="font-bold text-lg"
                                 :class="getTransactionTypeStyle(transaction.type)"
                             >
-                               {{ transaction.accountCurrency ?? '$' }} {{ transaction.type === TRANSACTION_TYPE.INFLOW ? '' : '-' }} {{ formatCurrency(Math.abs(transaction.amount)) }}
+                               {{ config.account?.currency ?? '$' }} {{ transaction.type === TRANSACTION_TYPE.INFLOW ? '' : '-' }} {{ formatCurrency(Math.abs(transaction.amount)) }}
                             </p>
                         </div>
                     </div>
@@ -164,7 +182,9 @@ const handleLoadMore = () => {
                                 <!-- {{ formatDate(transaction.date) }}  -->
                                 {{ formatOnlyHours(transaction.createdAt) }}
                              </div>
-                            <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors">
+                            <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors"
+                             @click="editTransaction(transaction)"
+                            >
                                 <i class="pi pi-external-link"></i>
                             </button>
                         </div>
@@ -182,7 +202,7 @@ const handleLoadMore = () => {
             </div>
         </div>
         <!-- Empty State -->
-        <div v-else class="">
+        <div v-else class="mt-10">
             <EmptyRecords message="No hay movimientos para esta fecha"/>
         </div>
     </div>

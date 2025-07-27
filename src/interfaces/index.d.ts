@@ -51,7 +51,25 @@ export interface Transaction {
     categoryId: number;
     createdAt: Date;
     updatedAt: Date;
-}    
+}  
+
+export interface TransactionItem {
+    id: number;
+    
+    type: TransactionType;      // Si "0" es string, manténgalo así
+    amount: number;
+    description: string;
+    date: string;      // YYYY-MM-DD
+    
+    categoryColor: string;
+    categoryName: string;
+    
+    createdAt: string; // ISO date string
+    updatedAt: string; // ISO date string
+
+    categoryId: number;
+    accountId: number;
+}  
 
 // interfaces para la configuracion del usuario
 export interface UserConfig {

@@ -1,5 +1,5 @@
 import api from './api'
-import type { Transaction, TransactionType } from '../interfaces'
+import type { Transaction, TransactionItem, TransactionType } from '../interfaces'
 
 export const getTransactionRq = async (id: number) => {
     const response = await api.get<Transaction>(`/transactions/${id}`)
@@ -12,7 +12,12 @@ export const getTransactionsRq = async (params: {
     categoryId: number | null, 
     type: TransactionType | null 
 }) => {
-    const response = await api.get<Transaction[]>('/transactions', { params })
+    const response = await api.get<TransactionItem[]>('/transactions', { params })
+    return response.data
+}
+
+export const getTransactionByIdRq = async (id: number) => {
+    const response = await api.get<TransactionItem>(`/transactions/${id}`)
     return response.data
 }
 
@@ -23,6 +28,10 @@ export const getTotalTransactionsRq = async ({ date }: { date?: string | null })
 
 export const createTransactionRq = async (transaction: any) => {
     const response = await api.post<Transaction>('/transactions', transaction)
+    return response.data
+}
+export const updateTransactionRq = async (transaction: any) => {
+    const response = await api.patch<Transaction>(`/transactions/${transaction.id}`, transaction)
     return response.data
 }
 

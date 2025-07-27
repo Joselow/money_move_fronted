@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 import ScrollX from '@/commons/ScrollX.vue';
+import CommonLoader from '@/commons/CommonLoader.vue';
 
 import { useConfig } from '@/composables/useConfig';
 import { useTransaction } from '@/composables/useTransaction';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { TRANSACTION_TYPE } from '@/constants/transaction';
-import type { Category, TransactionType } from '@/interfaces';
+import type { Category, TransactionItem, TransactionType } from '@/interfaces';
 
 import { useDate } from '@/composables/useDate';
+import { getItem } from '@/utils/localStorage';
 
-const { createTransaction } = useTransaction()
+const { createTransaction, getTransactionById, updateTransaction, loading } = useTransaction()
 const { targetDate } = useDate()
 
 const { config } = useConfig()
 
 const router = useRouter()
+const route = useRoute()
+
+const { id } = route.params
 
 const props = defineProps<{
     type: TransactionType,
@@ -31,39 +36,119 @@ const text = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'text-red-5
 const categoryId = ref<number | null>(null)
 const amount = ref<number | null>(null)
 const notes = ref('')
+const infoDate = ref<string | null>(null)
+const amountInput = ref<HTMLInputElement | null>(null)
+
+startRequest()
+
+async function startRequest() {
+    if (!id) {
+        clearForm()
+        return
+    }
+
+    const transaction: string | null = getItem()
+    if (transaction) {
+        const transactionData = JSON.parse(transaction) as TransactionItem
+        if  (Number(transactionData.id) == Number(id)) {
+            setForm(JSON.parse(transaction) as TransactionItem)
+        }
+        else {
+            router.push({ name: 'Home' })
+        }
+    } else {
+        const transaction = await getTransactionById(Number(id))        
+        setForm(transaction)
+    }
+}
 
 const save = async() => {
     if (!categoryId.value || !amount.value) {
         return
     }
-    const { success } = await createTransaction({
-        type: props.type,
-        amount: Number(amount.value),
-        description: notes.value,
-        accountId: config.account?.id,
-        categoryId: categoryId.value,
-        date: targetDate.value
-    })
+    const { success } = id 
+        ? await updateTransaction({
+            id: Number(id),
+            categoryId: categoryId.value,
+            amount: Number(amount.value),
+            description: notes.value,
+            date: String(infoDate.value),
+            accountId: config.account?.id,
+        }) 
+        : await createTransaction({
+            type: props.type,
+            categoryId: categoryId.value,
+            amount: Number(amount.value),
+            description: notes.value,
+            date: targetDate.value,
+            accountId: config.account?.id,
+        })
     
     if (success) {
         clearForm()
+        if (id) {
+            router.push({ name: 'List' })
+        }
     }
 }
-const clearForm = async () => {
+function clearForm () {
     categoryId.value = null
     amount.value = null
     notes.value = ''
 }
 
-const selectCategory = async (id: number) => {
-    console.log(id);
-    notes.value = props.categories.find((category: Category) => category.id === id)?.name || ''
-    categoryId.value = id
+function setForm (data: TransactionItem) {
+    categoryId.value = data.categoryId
+    amount.value = data.amount
+    notes.value = data.description
+    infoDate.value = data.date
+    console.log(categoryId.value);
 }
+
+const selectCategory = async (idCategory: number) => {
+    console.log(id);
+    
+    const previousCategory = props.categories.find((category: Category) => category.id === categoryId.value)?.name || ''
+    const newCategory = props.categories.find((category: Category) => category.id === idCategory)?.name || ''
+    
+    console.log({previousCategory, newCategory});
+    
+    categoryId.value = idCategory
+    if (notes.value.includes(previousCategory)) {
+        notes.value = notes.value.replace(previousCategory, newCategory)
+    }
+    else if (!notes.value.trim()) {
+        notes.value = newCategory + ','
+    }
+
+    focusAmount()
+}
+
+const focusAmount = async () => {
+    if (amountInput.value) {
+        amountInput.value.focus()
+    }
+}
+
+onMounted(() => {
+    if (!id) {
+        focusAmount()
+    }
+})
 </script>
 
 <template>
-    <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl py-2 px-4 flex flex-col gap-6 shadow-2xl ${border}`">
+
+    <CommonLoader v-if="loading"/>
+
+    <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl py-2 px-4 flex flex-col gap-5 shadow-2xl ${border}`">
+        <div class="text-lg text-end text-white"
+            v-if="id"
+        >
+            <label class="text-sm font-medium tex-muted text-neutral-300 me-2" for="date">Fecha transacción </label>
+            <input type="date" id="date" v-model="infoDate">
+        </div>
+
         <div>
             <ScrollX class="mt-1">
                 <template v-for="category in categories" :key="category.id">
@@ -93,6 +178,7 @@ const selectCategory = async (id: number) => {
                 v-model.number="amount"
                 type="number"
                 placeholder="0.00"
+                ref="amountInput"
                 :class="`${text} w-full h-32 pl-12 pr-4 text-center text-6xl font-light tracking-wide rounded-xl bg-transparent border-2 border-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 transition-all duration-300`"
                 :style="{ 'border-color': text === 'text-red-500' ? 'rgb(239 68 68)' : 'rgb(34 197 94)', 'color': text === 'text-red-500' ? 'rgb(239 68 68)' : 'rgb(34 197 94)' }"
             />

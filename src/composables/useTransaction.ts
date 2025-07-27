@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue'
-import { createTransactionRq , getTotalTransactionsRq, getTransactionsRq, } from '../services/transactionService'
-import type { Transaction, TransactionType } from '../interfaces'
+import { createTransactionRq , deleteTransactionRq, getTotalTransactionsRq, getTransactionByIdRq, getTransactionsRq, updateTransactionRq, } from '../services/transactionService'
+import type { Transaction, TransactionItem, TransactionType } from '../interfaces'
 import { toast } from 'vue-sonner'
 import { useDate } from './useDate'
 import { currentDate } from '@/utils/date'
@@ -25,7 +25,7 @@ export function useTransaction() {
 
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const transactions = ref<Transaction[]>([])
+  const transactions = ref<TransactionItem[]>([])
   const loadingTransactions = ref(false)
 
   const createTransaction = async (data: Partial<Transaction>) => {
@@ -39,6 +39,26 @@ export function useTransaction() {
     } catch (err: any) {
       error.value = err?.message || 'Error al crear la cuenta'
       toast.error(err?.message || 'Error al crear la cuenta')
+      return { success: false }
+    } finally {
+      loading.value = false
+    }
+  }
+  const updateTransaction = async (data: Partial<Transaction>) => {
+    if (!data.id) {
+      toast.error('Transacción no encontrada')
+      return { success: false }
+    }
+    loading.value = true
+    error.value = null
+    try {
+      await updateTransactionRq({...data })
+      toast.success('Transacción actualizada correctamente')
+
+      return { success: true }
+    } catch (err: any) {
+      error.value = err?.message || 'Error al actualizar la transacción'
+      toast.error(err?.message || 'Error al actualizar la transacción')
       return { success: false }
     } finally {
       loading.value = false
@@ -59,6 +79,20 @@ export function useTransaction() {
       throw err
     } finally {
       loadingTransactions.value = false
+    }
+  }
+
+  const getTransactionById = async (id: number) => {
+    loading.value = true
+    error.value = null
+    try {
+      const result = await getTransactionByIdRq(id)
+      return result
+    } catch (err: any) {
+      error.value = err?.message || 'Error al obtener la transacción'
+      throw err
+    } finally {
+      loading.value = false
     }
   }
 
@@ -97,6 +131,24 @@ export function useTransaction() {
     } finally {
       loading.value = false
     }
+
+   
+  }
+
+  const deleteTransaction = async (id: number) => {
+    loading.value = true
+    error.value = null
+    try {
+      await deleteTransactionRq(id)
+      toast.success('Transacción eliminada correctamente')
+      return { success: true }
+    } catch (err: any) {
+      error.value = err?.message || 'Error al eliminar la transacción'
+      toast.error(err?.message || 'Error al eliminar la transacción')
+      return { success: false }
+    } finally {
+      loading.value = false
+    }
   }
 
   return {
@@ -104,12 +156,18 @@ export function useTransaction() {
     error,
     transactions,
     loadingTransactions,
-    filters,
-    createTransaction,
+
     getTransactions,
+    getTransactionById,
+    createTransaction,
+    updateTransaction,
+    deleteTransaction,
+    
+    totalTransaction,
+    getTotalTransactions,
+    
+    filters,
     updateFilters,
     clearFilters,
-    getTotalTransactions,
-    totalTransaction
   }
 }

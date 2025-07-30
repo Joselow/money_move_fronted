@@ -6,7 +6,6 @@ import FormTransaction from '@/components/Transaction/FormTransaction.vue'
 import FullScreenLoader from '@/commons/FullScreenLoader.vue'
 
 import { TRANSACTION_TYPE } from '@/constants/transaction'
-import { useCategory } from '@/composables/useCategory'
 import { useTransaction } from '@/composables/useTransaction'
 
 const router = useRouter()
@@ -16,10 +15,8 @@ const { id } = route.params
 
 const type = route.meta.type == TRANSACTION_TYPE.INFLOW ?  TRANSACTION_TYPE.INFLOW :  TRANSACTION_TYPE.OUTFLOW
 
-const { categories, getCategories } = useCategory()
 const { deleteTransaction, loading } = useTransaction()
 
-getCategories(type)
 
 const handleDeleteTransaction = async () => {
     if (!id) {
@@ -57,7 +54,6 @@ const handleDeleteTransaction = async () => {
 
        <FormTransaction 
             :type="type"
-            :categories="categories"
         />
     </div>
 </template>

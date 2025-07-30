@@ -13,9 +13,7 @@ export function useCategory() {
       error.value = null
       try {
         const result = await CategoryService.getCategories(type)
-        categories.value = result
-        console.log(categories.value);
-        
+        categories.value = result        
         return result
       } catch (err: any) {
         error.value = err?.message || 'Error al crear la cuenta'

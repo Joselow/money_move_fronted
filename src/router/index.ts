@@ -1,6 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
 import { requireAuth, requireGuest } from '../guards/auth';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
+
+export let lastRoute = null as string | null;
 
 const routes = [
   {
@@ -43,7 +45,10 @@ const routes = [
     name: 'List',
     component: () => import('../views/TransactionHistoryView.vue'),
     meta: { requiresAuth: true },
-    beforeEnter: requireAuth,
+    beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      lastRoute = from.fullPath;
+      requireAuth(to, from, next)
+    },
   },
   {
     path: '/edit/:id',

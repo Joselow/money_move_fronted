@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import TransactionFilters from '@/components/Transaction/TransactionFilters.vue'
 import CommonLoader from '@/commons/CommonLoader.vue';
@@ -8,25 +9,24 @@ import EmptyRecords from '@/commons/EmptyRecords.vue';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 
 import { formatCurrency } from '@/utils/format';
-import { currentDate, formatDate, formatOnlyHours, formatFullDateText } from '@/utils/date';
+import { currentDate, formatOnlyHours, formatFullDateText } from '@/utils/date';
 
 import { useDate } from '@/composables/useDate';
-import { useCategory } from '@/composables/useCategory';
 import { useTransaction } from '@/composables/useTransaction';
 import { useConfig   } from '@/composables/useConfig';
-import router from '@/router';
 import type { TransactionItem, TransactionType } from '@/interfaces';
+import { lastRoute } from '@/router';
+import { exportTransactionsToExcel } from '@/helpers/exportExcel';
 
 const { targetDate, updateTargetDate, resetDate, } = useDate()
 const { config } = useConfig()
 
-const { categories, getCategories } = useCategory()
 const { transactions, getTransactions, filters, clearFilters, loadingTransactions } = useTransaction()
 
-getCategories()
-filters.startDate = targetDate.value
-filters.offset = 0
-getTransactions()
+const router = useRouter()
+
+start()
+
 
 const updateFilters = (newFilters: Partial<typeof filters>) => {
     Object.assign(filters, newFilters)
@@ -88,18 +88,35 @@ const handleLoadMore = () => {
 const editTransaction = (transaction: TransactionItem) => {
     localStorage.setItem('LOCAL_STORAGE_SAVE_TRANSAC_ITEM', JSON.stringify(transaction))
 
-    if (transaction.type === TRANSACTION_TYPE.INFLOW) {
-        router.push({ name: 'Inflow', params: { id: transaction.id } })
-    }
-    else if (transaction.type === TRANSACTION_TYPE.OUTFLOW) {
-        router.push({ name: 'Outflow', params: { id: transaction.id } })
-    } 
-    else {
-        console.log(transaction.type);
-        
-        alert(transaction.type)
-    }
+    const isDiferentDate = filters.startDate !== currentDate()
+    
+    router.push({
+        name: transaction.type === TRANSACTION_TYPE.INFLOW ? 'Inflow' : 'Outflow', 
+        params: { id: transaction.id }, 
+        // si esdiferente incluir este query param, sino nada
+        query: isDiferentDate ? { date: filters.startDate } : {}
+    })
 }
+
+
+function getDateFromForwardQueryParams () {
+    console.log({lastRoute});
+    
+    if (!lastRoute) return null
+
+    const url = new URL(lastRoute as string, window.location.origin);
+    const date = url.searchParams.get('date');
+
+   return date
+}
+
+function start () {
+    const date = getDateFromForwardQueryParams()
+    filters.startDate = date ?? targetDate.value
+    filters.offset = 0
+    getTransactions()
+}
+
 </script>
 
 <template>
@@ -206,6 +223,12 @@ const editTransaction = (transaction: TransactionItem) => {
             <EmptyRecords message="No hay movimientos para esta fecha"/>
         </div>
     </div>
+
+    <button class="cursor-pointer hover:bg-gray-300 shadow-lg bg-white border border-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
+        @click="exportTransactionsToExcel(transactions)"
+    >
+        Exportar a Excel
+    </button>
 </template>
 
 <style scoped>

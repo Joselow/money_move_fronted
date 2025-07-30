@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import 'dayjs/locale/es'
 dayjs.locale('es')
+
 export const currentDate = () => {
     const today = dayjs();
     // const formattedDate =  today.format('DD/MM/YYYY');

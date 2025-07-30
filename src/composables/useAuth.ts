@@ -14,9 +14,7 @@ export function useAuth() {
 
   // Computed property para verificar si está autenticado
   const authenticated = computed(() => {
-    // return true
-    console.log(isAuthenticated(), 'AUTHENTICATED?');
-    
+    // return true    
     return isAuthenticated() && user.value !== null
   })
 
@@ -67,7 +65,6 @@ export function useAuth() {
         // if (!config.account) {
         //   getConfig()
         // }
-          console.log(user.value);
       } catch (err) {
         console.error('Token verification error:', err)
         logout()

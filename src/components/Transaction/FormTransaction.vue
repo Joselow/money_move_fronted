@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
 
 import ScrollX from '@/commons/ScrollX.vue';
 import CommonLoader from '@/commons/CommonLoader.vue';
 
 import { useConfig } from '@/composables/useConfig';
 import { useTransaction } from '@/composables/useTransaction';
-import { useRoute, useRouter } from 'vue-router';
+import { useCategory } from '@/composables/useCategory';
 
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 import type { Category, TransactionItem, TransactionType } from '@/interfaces';
@@ -14,6 +15,7 @@ import type { Category, TransactionItem, TransactionType } from '@/interfaces';
 import { useDate } from '@/composables/useDate';
 import { getItem } from '@/utils/localStorage';
 
+const { categories, getCategories } = useCategory()
 const { createTransaction, getTransactionById, updateTransaction, loading } = useTransaction()
 const { targetDate } = useDate()
 
@@ -25,8 +27,7 @@ const route = useRoute()
 const { id } = route.params
 
 const props = defineProps<{
-    type: TransactionType,
-    categories: Category[],
+    type: TransactionType
 }>()
 
 const bg = computed(() => props.type == TRANSACTION_TYPE.OUTFLOW ? 'bg-rose-400' : 'bg-green-500')
@@ -91,6 +92,7 @@ const save = async() => {
         }
     }
 }
+
 function clearForm () {
     categoryId.value = null
     amount.value = null
@@ -108,16 +110,21 @@ function setForm (data: TransactionItem) {
 const selectCategory = async (idCategory: number) => {
     console.log(id);
     
-    const previousCategory = props.categories.find((category: Category) => category.id === categoryId.value)?.name || ''
-    const newCategory = props.categories.find((category: Category) => category.id === idCategory)?.name || ''
+    const previousCategory = categories.value.find((category: Category) => category.id === categoryId.value)?.name || ''
+    const newCategory = categories.value.find((category: Category) => category.id === idCategory)?.name || ''
     
     console.log({previousCategory, newCategory});
     
     categoryId.value = idCategory
-    if (notes.value.includes(previousCategory)) {
+    if (notes.value && notes.value.includes(previousCategory)) {
+        console.log('e+');
+        console.log(notes.value, previousCategory, newCategory);
+        
         notes.value = notes.value.replace(previousCategory, newCategory)
     }
     else if (!notes.value.trim()) {
+        console.log('aea');
+        
         notes.value = newCategory + ','
     }
 
@@ -130,11 +137,23 @@ const focusAmount = async () => {
     }
 }
 
-onMounted(() => {
+const selectedCategory = ref<HTMLDivElement [] | null>(null);
+
+onMounted(async() => {
     if (!id) {
         focusAmount()
     }
+    await getCategories(props.type)
+    
+    if (selectedCategory.value && selectedCategory.value[0]) {
+        selectedCategory.value[0].scrollIntoView({
+          behavior: 'smooth',
+          inline: 'center', // Para eje X
+          block: 'nearest' // Para eje Y (no se aplica en X)
+        });
+      }
 })
+
 </script>
 
 <template>
@@ -153,6 +172,7 @@ onMounted(() => {
             <ScrollX class="mt-1">
                 <template v-for="category in categories" :key="category.id">
                     <div
+                        :ref="category.id === categoryId ? 'selectedCategory' : ''"
                         class="mt-1 px-6 py-2 border-2 rounded-full text-white cursor-pointer whitespace-nowrap transition-all duration-300 transform hover:scale-105"
                         @click="selectCategory(category.id)"
                         :class="{
@@ -192,9 +212,9 @@ onMounted(() => {
         ></textarea>
 
         <div class="flex justify-between items-center gap-4 mt-2">
-            <router-link :to="{ name: 'Home' }" class="flex-shrink-0 w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center text-white text-2xl hover:bg-neutral-700 transition-colors">
+            <button @click="router.back()" class="flex-shrink-0 w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center text-white text-2xl hover:bg-neutral-700 transition-colors">
                 <i class="pi pi-arrow-left"></i>
-            </router-link>
+            </button>
 
             <button
                 @click="save"

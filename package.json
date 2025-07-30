@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@linways/table-to-excel": "^1.0.4",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",

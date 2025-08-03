@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
 import FullScreenLoader from '../../commons/FullScreenLoader.vue'
 import CommonLoader from '@/commons/CommonLoader.vue'
 import ScrollX from '@/commons/ScrollX.vue'

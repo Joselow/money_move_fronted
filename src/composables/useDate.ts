@@ -1,9 +1,6 @@
 import { ref } from "vue";
 
-import {  useConfig } from "./useConfig";
 import { currentDate } from "@/utils/date";
-
-const  { config } = useConfig()
 
 const targetDate = ref(currentDate())
 

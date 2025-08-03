@@ -1,24 +1,13 @@
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted } from 'vue'
+// import { defineAsyncComponent } from 'vue'
 
 import { useAuth } from './composables/useAuth'
 import { Toaster } from 'vue-sonner'
-const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
+// const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
 
-const { checkAuth, authenticated } = useAuth()
+const { checkAuth } = useAuth()
 
-checkAuth()  
-
-// onMounted(() => {
-//     window.addEventListener('popstate', function(event) {
-//         if (event.state && event.state.filtros && event.state.filtros.activo) {
-//             const fecha = event.state.filtros.fecha;
-//             document.getElementById('inputFecha')?.value = fecha;
-//             updateTargetDate(fecha);
-//             getTransactions();
-//     }
-//   });
-// })
+checkAuth() 
 </script>
 
 <template>

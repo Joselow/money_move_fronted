@@ -32,6 +32,19 @@ export const formatFullDateText = (date: string) => {
     return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 }
 
+// date in iso hours, if the date dont have hours add   00:00:00
+export const formatIsoHours = (date: string) => {
+    
+    if (!date) return null
+    const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
+    console.log({
+        formattedDate,
+        date
+    });
+    
+    return formattedDate
+}
+
 // fin de mes
 export const endOfMonth = () => {
     const today = dayjs();

@@ -5,17 +5,28 @@ const actions = {
     401: () => {
         removeAuthToken()
     },
-    403: () => {
-        toast.error('Acceso denegado')
+    403: (msg = null) => {
+        toast.error(msg ?? 'Acceso denegado')
     },
-    404: () => {
-        toast.error('No encontrado')
+    404: (msg = null) => {
+        toast.error(msg ?? 'No encontrado')
     },
-    500: () => {
-        toast.error('Error interno del servidor')
+    500: (msg = null) => {
+        toast.error(msg ?? 'Error interno del servidor')
+    },
+    400: (msg = null) => {
+        toast.error(msg ?? 'Ocurrio un error')
     },
 }
-export const handleErrors = async (error: keyof typeof actions) => {
+export const handleErrors = async (error: any) => {
     if (!error) return
-    actions[error]()
+
+    // if (error.status === 404 && error.response?.data?.message) {
+    //     toast.error(error.response?.data?.message)
+    //   }
+    const status = error.status as keyof typeof actions
+
+    if (actions[status]) {
+        actions[status](error.response?.data?.message)
+    }
 }

@@ -39,7 +39,7 @@ const handleDeleteTransaction = async () => {
 <template>
     <FullScreenLoader v-if="loading" />
 
-    <h1 class="text-xl font-bold tracking-wider mb-4 text-white">Registrar {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
+    <h1 class="text-xl font-bold tracking-wider mb-4 text-white">{{ id ? 'Ajustar' : 'Registrar' }} {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
 
     <div class="">
         <div class="flex justify-end mb-2"

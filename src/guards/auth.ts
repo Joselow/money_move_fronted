@@ -4,16 +4,15 @@ import { useConfig } from '@/composables/useConfig'
 
 // Guard para rutas protegidas
 const { getConfig, config } = useConfig()
-export function requireAuth(
-  to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+export async function requireAuth(
+  _to: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
-): void {
+): Promise<void> {
 
   if (isAuthenticated()) {
-
     if (!config.account) {
-      getConfig()
+      await getConfig()
     }
     next()
   } else {
@@ -23,8 +22,8 @@ export function requireAuth(
 
 // Guard para rutas públicas (redirigir si ya está autenticado)
 export function requireGuest(
-  to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+  _to: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ): void {
   if (isAuthenticated()) {

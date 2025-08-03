@@ -1,17 +1,14 @@
 import api from './api'
+
 import type { Transaction, TransactionItem, TransactionType } from '../interfaces'
+import type { TransactionFilters } from '@/composables/useTransaction'
 
 export const getTransactionRq = async (id: number) => {
     const response = await api.get<Transaction>(`/transactions/${id}`)
     return response.data
 }
 
-export const getTransactionsRq = async (params: {
-    startDate: string, 
-    endDate: string | null, 
-    categoryId: number | null, 
-    type: TransactionType | null 
-}) => {
+export const getTransactionsRq = async (params: TransactionFilters & { all?: boolean }) => {
     const response = await api.get<TransactionItem[]>('/transactions', { params })
     return response.data
 }

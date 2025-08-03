@@ -10,9 +10,6 @@ import { useConfig } from '@/composables/useConfig'
 import { useAuth } from '@/composables/useAuth'
 import { useAccount } from '@/composables/useAccount'
 
-import type { Account } from '@/interfaces'
-
-
 const open = defineModel<boolean>({default: false})
 
 const { authenticated, logout, } = useAuth()
@@ -26,7 +23,7 @@ function close() {
 const showModalFormAccount = ref(false)
 const showAccountsList = ref(false)
 
-const onCreateAccount = (account: Account) => {
+const onCreateAccount = () => {
   open.value = false
   showModalFormAccount.value = false
 }

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import TransactionFilters from '@/components/Transaction/TransactionFilters.vue'
+// import TransactionFilters from '@/components/Transaction/TransactionFilters.vue'
 import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
@@ -14,29 +14,34 @@ import { currentDate, formatOnlyHours, formatFullDateText } from '@/utils/date';
 import { useDate } from '@/composables/useDate';
 import { useTransaction } from '@/composables/useTransaction';
 import { useConfig   } from '@/composables/useConfig';
-import type { TransactionItem, TransactionType } from '@/interfaces';
+import type { TransactionItem } from '@/interfaces';
 import { lastRoute } from '@/router';
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
 
-const { targetDate, updateTargetDate, resetDate, } = useDate()
+const { targetDate, 
+    // updateTargetDate, 
+    // resetDate,
+ } = useDate()
 const { config } = useConfig()
 
-const { transactions, getTransactions, filters, clearFilters, loadingTransactions } = useTransaction()
+const { transactions, getTransactions, reloadTransactions, filters, 
+    // clearFilters, 
+    loadingTransactions, getTransactionsToExport } = useTransaction()
 
 const router = useRouter()
 
 start()
 
 
-const updateFilters = (newFilters: Partial<typeof filters>) => {
-    Object.assign(filters, newFilters)
-    getTransactions()
-}
+// const updateFilters = (newFilters: Partial<typeof filters>) => {
+//     Object.assign(filters, newFilters)
+//     getTransactions()
+// }
 
-const handleClearFilters = () => {
-    clearFilters()
-    getTransactions()
-}
+// const handleClearFilters = () => {
+//     clearFilters()
+//     getTransactions()
+// }
 
 
 // Helper function to get transaction type styling
@@ -78,7 +83,7 @@ const handleChangeDate = async (e: Event) => {
   getTransactions()
 }
 
-const handleLoadMore = () => {
+const handleLoadMore = () => {  
     if (filters.offset !== undefined && filters.limit !== undefined) {
         filters.offset += filters.limit
     }
@@ -117,6 +122,11 @@ function start () {
     getTransactions()
 }
 
+const handleExportExcel = async () => {
+    const transactions = await getTransactionsToExport()
+    exportTransactionsToExcel(transactions)
+}
+
 </script>
 
 <template>
@@ -129,7 +139,7 @@ function start () {
             <h1 class="text-xl font-bold tracking-wider mb-2 text-white">Transacciones</h1>
             
             <!-- Date Header Card -->
-            <div class="mb-4 shadow-lg rounded-xl py-2 text-white shadow-lg">
+            <div class="shadow-lg rounded-xl py-2 text-white shadow-lg">
                 <div class="flex justify-between items-center">
                     <div class="leading-none">
                         <input ref="dateInput" class="text-sm hidden" type="date" v-model="filters.startDate"
@@ -149,6 +159,21 @@ function start () {
                     </div> -->
                 </div>
             </div>
+        </div>
+        <div class="flex justify-end mb-2 gap-2">
+            <button class="me-2 text-xs cursor-pointer border border-blue-600 text-white font-bold hover:bg-blue-600/50 shadow-lg 
+                px-5 py-1 rounded-lg  transition-colors font-medium"
+                @click="reloadTransactions"
+            >
+                <i class="pi pi-refresh"></i> 
+            </button>
+            <button class="text-xs cursor-pointer border border-green-600 text-white font-bold hover:bg-green-600/50 shadow-lg 
+                px-4 py-1 rounded-lg  transition-colors font-medium"
+                @click="handleExportExcel"
+            >
+                <i class="pi pi-file-excel"></i> 
+                <!-- Exportar -->
+            </button>
         </div>
 
         <!-- Content Area -->
@@ -208,27 +233,25 @@ function start () {
                     </div>
                 </div>
             </div>
-
-            <!-- Load More Button (Optional) -->
-            <div class="flex justify-center pt-1">
-                <button class="cursor-pointer hover:bg-gray-300 shadow-lg bg-white border border-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
-                    @click="handleLoadMore()"
-                >
-                    Cargar más...
-                </button>
-            </div>
         </div>
+
         <!-- Empty State -->
         <div v-else class="mt-10">
             <EmptyRecords message="No hay movimientos para esta fecha"/>
         </div>
+        
+        <!-- load more-->
+        <div class="text-center mt-2">
+            <button class="cursor-pointer border border-gray-600 text-white font-bold hover:bg-gray-600/50 shadow-lg 
+                px-6 py-2 rounded-lg  transition-colors font-medium"
+                @click="handleLoadMore"
+            >
+                <!-- <i class="pi pi-refresh"></i>  -->
+                Cargar mas...
+            </button>
+        </div>
+      
     </div>
-
-    <button class="cursor-pointer hover:bg-gray-300 shadow-lg bg-white border border-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
-        @click="exportTransactionsToExcel(transactions)"
-    >
-        Exportar a Excel
-    </button>
 </template>
 
 <style scoped>

@@ -13,19 +13,27 @@ import { formatDate } from '@/utils/date'
 import { formatCurrency } from '@/utils/format'
 
 const { user } = useAuth()
-const { config, getConfig } = useConfig()
+const { config } = useConfig()
 
 const { getTotalTransactions, totalTransaction, loading } = useTransaction()
+
 const { styles } = useStyles({ total: totalTransaction })
 
 const { targetDate, updateTargetDate, dateInput, resetDate } = useDate()
 
 const { account } = toRefs(config)
-// getConfig()
 
 const showOptions = ref(false)
 
-getTotalTransactions()
+
+const start = async () => {
+  if (config.account)  {
+    getTotalTransactions()
+  }
+}
+
+start()
+
 
 const updateDate = async (e: Event) => {
   const target = e.target as HTMLInputElement
@@ -183,8 +191,6 @@ pi-arrow-up-right
         </div>
       </router-link>
     </div>
-
-
     <!-- Botón para mostrar cuentas -->
     <!-- Eliminado: ya no se muestra aquí -->
   </div>

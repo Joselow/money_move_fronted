@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
+import { createRouter, createWebHashHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
 import { requireAuth, requireGuest } from '../guards/auth';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 
@@ -46,7 +46,9 @@ const routes = [
     component: () => import('../views/TransactionHistoryView.vue'),
     meta: { requiresAuth: true },
     beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-      lastRoute = from.fullPath;
+      lastRoute = from.fullPath; 
+      console.log(lastRoute);
+           
       requireAuth(to, from, next)
     },
   },
@@ -58,17 +60,17 @@ const routes = [
     meta: { requiresAuth: true },
     beforeEnter: requireAuth,
   },
-  {
-    path: '/report',
-    name: 'Report',
-    component: () => import('../views/ReportView.vue'),
-    meta: { requiresAuth: true },
-    beforeEnter: requireAuth,
-  },
+  // {
+  //   path: '/report',
+  //   name: 'Report',
+  //   component: () => import('../views/ReportView.vue'),
+  //   meta: { requiresAuth: true },
+  //   beforeEnter: requireAuth,
+  // },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 

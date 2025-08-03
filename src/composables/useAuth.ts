@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAuthToken, removeAuthToken, getAuthToken, isAuthenticated } from '../utils/cookies'
+import { setAuthToken, getAuthToken, isAuthenticated, removeAuthToken } from '../helpers/cookies'
 import { authService } from '../services/authService'
 
 const user = ref<any>(null)
@@ -14,9 +14,7 @@ export function useAuth() {
 
   // Computed property para verificar si está autenticado
   const authenticated = computed(() => {
-    // return true
-    console.log(isAuthenticated(), 'AUTHENTICATED?');
-    
+    // return true    
     return isAuthenticated() && user.value !== null
   })
 
@@ -45,9 +43,9 @@ export function useAuth() {
 
   // Función de logout
   const logout = async () => {
-      // removeAuthToken()
-      // user.value = null
-      // router.push({ name: 'Login' })
+      removeAuthToken()
+      user.value = null
+      router.push({ name: 'Login' })
   }
 
   // Función para verificar el token al cargar la aplicación
@@ -63,8 +61,10 @@ export function useAuth() {
         }
         
         user.value = response.user
-        // getConfig()
-          console.log(user.value);
+
+        // if (!config.account) {
+        //   getConfig()
+        // }
       } catch (err) {
         console.error('Token verification error:', err)
         logout()

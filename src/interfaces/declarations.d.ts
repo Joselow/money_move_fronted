@@ -1,0 +1,2 @@
+declare module '@linways/table-to-excel'
+declare var TableToExcel: any;

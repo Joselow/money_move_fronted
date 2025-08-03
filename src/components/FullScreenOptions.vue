@@ -1,38 +1,44 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 
 import FormAccount from './Account/FormAccount.vue'
-import ModalBase from '@/commons/ModalBase.vue'
+import AccountsList from './Account/AccountsList.vue'
 
-import { useAuth } from '@/composables/useAuth'
+const ModalBase = defineAsyncComponent(() => import('@/commons/ModalBase.vue'))
+
 import { useConfig } from '@/composables/useConfig'
-
-import type { Account } from '@/interfaces'
-
+import { useAuth } from '@/composables/useAuth'
+import { useAccount } from '@/composables/useAccount'
 
 const open = defineModel<boolean>({default: false})
 
 const { authenticated, logout, } = useAuth()
 const { config } = useConfig()
+const { getAccounts, accounts } = useAccount()
 
 function close() {
   open.value = false
 }
 
-
 const showModalFormAccount = ref(false)
+const showAccountsList = ref(false)
 
-const onCreateAccount = (account: Account) => {
-  console.log(account)
+const onCreateAccount = () => {
   open.value = false
   showModalFormAccount.value = false
 }
 
+const renderAccountsListModal = ref(false)
+
+const openAccountsListModal = async () => {
+  renderAccountsListModal.value = true
+  showAccountsList.value = true
+  getAccounts()
+}
+
 </script>
 
-
 <template>
-
 <ModalBase v-model="showModalFormAccount">
     <div class="py-4 px-4">
       <h1 class="text-lg font-bold tracking-wider mb-3">
@@ -53,6 +59,15 @@ const onCreateAccount = (account: Account) => {
     </div>
   </ModalBase>
 
+  <!-- Modal para lista de cuentas -->
+  <ModalBase v-if="renderAccountsListModal" v-model="showAccountsList" max-width="lg">
+    <div class="p-4">
+      <AccountsList 
+        :accounts="accounts"
+      />
+    </div>
+  </ModalBase>
+
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
     <!-- Fondo oscuro -->
     <div class="absolute inset-0 bg-black/90 bg-opacity-70 transition-opacity" @click="close"></div>
@@ -65,9 +80,10 @@ const onCreateAccount = (account: Account) => {
           Nueva cuenta
       </button>
       <template v-if="config.hasMultipleAccounts">
-        <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" >
-          <i class="pi pi-arrow-right-arrow-left
-      " />
+        <button class="w-full py-3 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition" 
+          @click="openAccountsListModal"
+        >
+          <i class="pi pi-arrow-right-arrow-left" />
           Cambiar de cuenta
         </button>
       </template>

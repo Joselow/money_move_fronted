@@ -1,5 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
 import { requireAuth, requireGuest } from '../guards/auth';
+import { TRANSACTION_TYPE } from '@/constants/transaction';
+
+export let lastRoute = null as string | null;
 
 const routes = [
   {
@@ -24,11 +27,30 @@ const routes = [
     beforeEnter: requireGuest,
   },
   {
-    path: '/list',
-    name: 'List',
-    component: () => import('../views/ListView.vue'),
-    meta: { requiresAuth: true },
+    path: '/transaction/inflow/:id?',
+    name: 'Inflow',
+    component: () => import('../views/TransactionView.vue'),
+    meta: { requiresAuth: true, type: TRANSACTION_TYPE.INFLOW },
     beforeEnter: requireAuth,
+  },
+  {
+    path: '/transaction/outflow/:id?',
+    name: 'Outflow',
+    component: () => import('../views/TransactionView.vue'),
+    meta: { requiresAuth: true, type: TRANSACTION_TYPE.OUTFLOW },
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/transactions',
+    name: 'List',
+    component: () => import('../views/TransactionHistoryView.vue'),
+    meta: { requiresAuth: true },
+    beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      lastRoute = from.fullPath; 
+      console.log(lastRoute);
+           
+      requireAuth(to, from, next)
+    },
   },
   {
     path: '/edit/:id',
@@ -38,17 +60,17 @@ const routes = [
     meta: { requiresAuth: true },
     beforeEnter: requireAuth,
   },
-  {
-    path: '/report',
-    name: 'Report',
-    component: () => import('../views/ReportView.vue'),
-    meta: { requiresAuth: true },
-    beforeEnter: requireAuth,
-  },
+  // {
+  //   path: '/report',
+  //   name: 'Report',
+  //   component: () => import('../views/ReportView.vue'),
+  //   meta: { requiresAuth: true },
+  //   beforeEnter: requireAuth,
+  // },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 

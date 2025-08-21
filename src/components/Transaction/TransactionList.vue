@@ -120,8 +120,6 @@ function getDateFromForwardQueryParams () {
 }
 
 function start () {
-    getCategories()
-
     const date = getDateFromForwardQueryParams()
     filters.startDate = date ?? targetDate.value
     filters.offset = 0
@@ -135,8 +133,12 @@ const handleExportExcel = async () => {
 
 const renderAdvancedFilter = ref(false)
 
-const showAdvancedFilters = async () => {
+const toogleAdvancedFilters = async () => {
     renderAdvancedFilter.value = !renderAdvancedFilter.value
+
+    if (categories.value.length < 1) {
+        getCategories()
+    }
 
     if (renderAdvancedFilter.value) {
         document.body.style.overflow = 'hidden';
@@ -157,7 +159,7 @@ const showAdvancedFilters = async () => {
     >
         <template #actions>
             <button
-                @click="renderAdvancedFilter = false"
+                @click="toogleAdvancedFilters"
                 class="cursor-pointer px-4 py-2 text-md bg-red-500  rounded-xl hover:bg-red-600 transition-colors"
             >
                 <i class="pi pi-times"></i>
@@ -190,7 +192,7 @@ const showAdvancedFilters = async () => {
                         </div>
                         <div>
                             <span class="px-3 py-2"
-                                @click="showAdvancedFilters"
+                                @click="toogleAdvancedFilters"
                             >
                                 <i class="pi pi-cog"></i>
                             </span>

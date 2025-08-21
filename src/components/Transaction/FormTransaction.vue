@@ -235,9 +235,9 @@ const handleChangeDate = async () => {
             ></textarea>
     
             <div class="flex justify-between items-center gap-4 mt-2">
-                <button @click="router.back()" class="flex-shrink-0 w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center text-white text-2xl hover:bg-neutral-700 transition-colors">
+                <!-- <button @click="router.back()" class="flex-shrink-0 w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center text-white text-2xl hover:bg-neutral-700 transition-colors">
                     <i class="pi pi-arrow-left"></i>
-                </button>
+                </button> -->
     
                 <button
                     @click="save"

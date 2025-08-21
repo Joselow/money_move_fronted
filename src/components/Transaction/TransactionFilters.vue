@@ -53,9 +53,9 @@ const clearAllFilters = () => {
 </script>
 
 <template>
-  <div class="bg-neutral-800 rounded-xl p-4 mb-4 space-y-4">
+  <div class="fixed inset-y-0 left-0 w-10/12 bg-black py-6 px-5 space-y-6 overflow-y-auto z-50">
     <!-- Date Range Filters -->
-    <div class="space-y-2">
+    <div class="space-y-3">
       <label class="text-sm font-medium text-neutral-300">Rango de Fechas</label>
       <div class="flex gap-2 flex-wrap">
         <input
@@ -74,7 +74,7 @@ const clearAllFilters = () => {
     </div>
 
     <!-- Transaction Type Filter -->
-    <div class="space-y-2">
+    <div class="space-y-3">
       <label class="text-sm font-medium text-neutral-300">Tipo de Transacción</label>
       <div class="flex gap-2">
         <button
@@ -114,7 +114,7 @@ const clearAllFilters = () => {
     </div>
 
     <!-- Category Filter -->
-    <div class="space-y-2">
+    <div class="space-y-3">
       <label class="text-sm font-medium text-neutral-300">Categorías</label>
       <ScrollX class="mt-1">
         <div class="flex gap-2 mt-2">
@@ -147,16 +147,18 @@ const clearAllFilters = () => {
             </div>
           </template>
         </div>
-      </ScrollX>
+      </ScrollX>      
     </div>
 
     <!-- Clear Filters Button -->
-    <div class="flex justify-end">
+    <div class="flex justify-end mt-8 gap-3">
+      <slot name="actions"></slot>
       <button
         @click="clearAllFilters"
-        class="px-4 py-2 text-sm bg-neutral-700 text-neutral-300 rounded-lg hover:bg-neutral-600 transition-colors"
+        class="cursor-pointer px-4 py-2 text-white text-md bg-zinc-500 rounded-xl hover:bg-zinc-600 transition-colors"
       >
-        Limpiar Filtros
+        <i class=" pi pi-eraser"></i>
+        Limpiar 
       </button>
     </div>
   </div>

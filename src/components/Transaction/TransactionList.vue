@@ -160,10 +160,10 @@ const toogleAdvancedFilters = async () => {
         <template #actions>
             <button
                 @click="toogleAdvancedFilters"
-                class="cursor-pointer px-4 py-2 text-md bg-red-500  rounded-xl hover:bg-red-600 transition-colors"
+                class="cursor-pointer px-6 py-2 text-md bg-red-500  rounded-xl hover:bg-red-600 transition-colors"
             >
                 <i class="pi pi-times"></i>
-                Cerrar 
+                CERRAR 
             </button>
         </template>
 
@@ -201,18 +201,18 @@ const toogleAdvancedFilters = async () => {
                 </div>
             </section>
         </div>
-        <div class="my-3 flex justify-end gap-2">
-            <button class="me-2 text-xs cursor-pointer border border-blue-600 text-white font-bold hover:bg-blue-600/50 shadow-lg 
-                px-5 py-1 rounded-lg  transition-colors font-medium"
+        <div class="my-3 flex justify-between gap-2">
+            <button class="me-2 text-xs cursor-pointer border border-blue-600 bg-blue-900/80 text-white font-bold hover:bg-blue-600/50 shadow-lg 
+                px-6 py-1 rounded-lg  transition-colors font-medium"
                 @click="reloadTransactions"
             >
-                <i class="pi pi-refresh"></i> 
+                <i class="pi pi-refresh"></i>  RECARGAR
             </button>
             <button class="text-xs cursor-pointer border border-green-600 text-white font-bold hover:bg-green-600/50 shadow-lg 
                 px-4 py-1 rounded-lg  transition-colors font-medium"
                 @click="handleExportExcel"
-            >
-                <i class="pi pi-file-excel"></i> 
+            > 
+                <i class="pi pi-file-excel"></i> EXCEL
                 <!-- Exportar -->
             </button>
         </div>
@@ -224,6 +224,7 @@ const toogleAdvancedFilters = async () => {
                 <div 
                     v-for="transaction in transactions" 
                     :key="transaction.id"
+                    @click="editTransaction(transaction)"
                     class=" rounded-xl shadow-md border border-2 border-gray-600 py-2 px-4 hover:shadow-lg transition-all duration-200 hover:border-gray-300 group"
                 >
                     <!-- Transaction Header -->
@@ -265,11 +266,11 @@ const toogleAdvancedFilters = async () => {
                                 <!-- {{ formatDate(transaction.date) }}  -->
                                 {{ formatOnlyHours(transaction.createdAt) }}
                              </div>
-                            <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors"
+                            <!-- <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors"
                              @click="editTransaction(transaction)"
                             >
                                 <i class="pi pi-external-link"></i>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -282,7 +283,7 @@ const toogleAdvancedFilters = async () => {
         </div>
         
         <!-- load more-->
-        <div class="text-center mt-2">
+        <div class="text-center mt-2 mb-18">
             <button class="cursor-pointer border border-gray-600 text-white font-bold hover:bg-gray-600/50 shadow-lg 
                 px-6 py-2 rounded-lg  transition-colors font-medium"
                 @click="handleLoadMore"

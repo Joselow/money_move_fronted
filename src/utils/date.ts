@@ -28,7 +28,7 @@ export const formatDateText = (date: string) => {
 
 // date in text
 export const formatFullDateText = (date: string) => {
-    const formattedDate = dayjs(date).format('dddd, DD [de] MMMM [del] YYYY')
+    const formattedDate = dayjs(date).format('dddd DD [de] MMMM')
     return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 }
 

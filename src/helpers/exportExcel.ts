@@ -2,12 +2,13 @@ import type { TransactionItem } from '@/interfaces';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 import { formatIsoHours } from '@/utils/date';
 
-export function exportTransactionsToExcel(transactions: TransactionItem[], fileName = 'transacciones_reporte') {
-    if (!transactions || transactions.length === 0) {
+export function exportTransactionsToExcel(transactionsList: TransactionItem[], fileName = 'transacciones_reporte') {
+    if (!transactionsList || transactionsList.length === 0) {
         console.warn('No hay transacciones para exportar a Excel.');
         // return;
     }
 
+    const transactions = transactionsList.toReversed()
     // 1. Construir el string HTML completo de la tabla
     let tableHtml = `
         <table style="display:none;" data-cols-width="15,15,20,30,40">

@@ -62,7 +62,7 @@ const changeDate = async () => {
   <div class="text-white">
     <div class=" w-full relative">
       <div>
-        <h1 class="text-2xl font-bold tracking-wider">Resumen del dia</h1>
+        <h1 class="text-2xl font-bold tracking-wider">Resumen del día</h1>
         <div class="mt-2">
           <p class="text-sm text-gray-400" v-if="account">
             <i class="pi pi-address-book" /> {{ account?.name }}

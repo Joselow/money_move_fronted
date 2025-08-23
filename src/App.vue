@@ -12,7 +12,7 @@ checkAuth()
 </script>
 
 <template>
-  <Toaster richColors />
+  <Toaster richColors position="top-right" />
   <div class="w-full min-h-screen flex justify-center px-6 py-7">
     <main class="w-12/12 md:w-6/12 2xl:w-8/12">
         <router-view />

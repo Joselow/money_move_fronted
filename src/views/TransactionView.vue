@@ -39,18 +39,21 @@ const handleDeleteTransaction = async () => {
 <template>
     <FullScreenLoader v-if="loading" />
 
-    <h1 class="text-xl font-bold tracking-wider mb-4 text-white">{{ id ? 'Ajustar' : 'Registrar' }} {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
-
-    <div class="">
+    <div class="flex justify-between">
+        <h1 class="text-xl font-bold tracking-wider mb-4 text-white">{{ id ? 'Ajustar' : 'Registrar' }} {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
         <div class="flex justify-end mb-2"
             v-if="id"
         >
             <button class="bg-red-500/60 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors"
                 @click="handleDeleteTransaction"
             > 
-                <i class="pi pi-trash"></i> 
+                <i class="pi pi-trash"></i> ELIMINAR
             </button>
         </div>
+    </div>
+
+    <div class="">
+       
 
        <FormTransaction 
             :type="type"

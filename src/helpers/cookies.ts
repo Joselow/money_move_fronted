@@ -17,7 +17,7 @@ export function getAuthToken(): string | null {
 export function setAuthToken(token: string): void {
   Cookies.set(TOKEN_KEY, token, { 
     expires: 30, // 1 día
-    // secure: process.env.NODE_ENV === 'production',
+    // secure: process.env.VITE_NODE_ENV === 'production',
     // sameSite: 'strict'
   })
 }

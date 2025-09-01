@@ -8,7 +8,7 @@ export function exportTransactionsToExcel(transactionsList: TransactionItem[], f
         // return;
     }
 
-    const transactions = transactionsList.toReversed()
+    const transactions = transactionsList.map(t => ({ ...t, categoryName:t.categoryName.toLocaleUpperCase() })).toReversed()
     // 1. Construir el string HTML completo de la tabla
     let tableHtml = `
         <table style="display:none;" data-cols-width="15,15,20,30,40">

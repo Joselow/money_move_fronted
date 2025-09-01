@@ -67,6 +67,16 @@ const routes = [
   //   meta: { requiresAuth: true },
   //   beforeEnter: requireAuth,
   // },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/NotFound404View.vue')
+  }, 
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    component: () => import('../views/NotFound404View.vue')
+  },
 ];
 
 const router = createRouter({

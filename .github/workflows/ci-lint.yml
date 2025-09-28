@@ -17,16 +17,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9   # la versión de pnpm que usas localmente
-          run_install: false
+      - name: Install PNPM
+        run: npm i -g pnpm
 
-      - name: Install deps (locked)
-        run: pnpm install --frozen-lockfile
+      # # - name: Setup pnpm
+      # #   uses: pnpm/action-setup@v4
+      # #   with:
+      # #     version: 9   # la versión de pnpm que usas localmente
+      # #     run_install: false
+
+      # - name: Install deps (locked)
+      #   run: pnpm install --frozen-lockfile
 
       - name: Run ESLint
         run: pnpm run lint

@@ -1,0 +1,50 @@
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [ "lint" ]        # debe coincidir con name: lint
+    types: [ completed ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main'
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.VPS_PORT }}" "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: SSH deploy (pull + build)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script_stop: true
+          script: |
+            set -e
+            BRANCH="${{ github.event.workflow_run.head_branch }}"
+            APP_DIR="${{ secrets.APP_DIR }}"
+            NODE_VER="${{ secrets.NODE_VERSION }}"
+            cd "$APP_DIR"
+            git fetch --all --prune
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && nvm use "$NODE_VER"
+            if command -v pnpm >/dev/null 2>&1; then pnpm install --frozen-lockfile && pnpm build;
+            elif command -v yarn >/dev/null 2>&1; then yarn install --frozen-lockfile && yarn build;
+            else npm ci && npm run build; fi
+            echo "OK deploy ($BRANCH)"

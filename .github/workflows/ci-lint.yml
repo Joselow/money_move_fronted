@@ -2,12 +2,14 @@ name: lint
 
 on:
   push:
-    branches: [ main ]
+    branches: ['**']
   pull_request:
-    branches: [ main ]
+    branches: ['**']
+  workflow_dispatch: {}
 
 jobs:
-  lint:
+  eslint:
+    name: ESLint
     runs-on: ubuntu-latest
 
     steps:
@@ -18,16 +20,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+          cache: 'npm'
 
       - name: Install deps (locked)
-        run: pnpm install --frozen-lockfile
+        run: npm ci   # instala usando package-lock.json
 
       - name: Run ESLint
-        run: pnpm run lint
+        run: npm run lint

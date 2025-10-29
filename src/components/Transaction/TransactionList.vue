@@ -4,48 +4,44 @@ import { useRouter } from 'vue-router';
 
 import { lastRoute } from '@/router';
 
-import TransactionFilters from '@/components/Transaction/TransactionFilters.vue'
 import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
-import { currentDate, formatOnlyHours, formatFullDateText } from '@/utils/date';
+import { currentDate, formatOnlyHours, formatFullDateText, formatDate, formatHours } from '@/utils/date';
 import { formatCurrency } from '@/utils/format';
 
 import { useDate } from '@/composables/useDate';
 import { useTransaction } from '@/composables/useTransaction';
 import { useConfig   } from '@/composables/useConfig';
-import { useCategory } from '@/composables/useCategory';
 
 
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 import type { TransactionItem } from '@/interfaces';
 
 const { targetDate, 
-    // updateTargetDate, 
-    // resetDate,
  } = useDate()
 const { config } = useConfig()
 
 const { transactions, getTransactions, reloadTransactions, filters, 
-    clearFilters, 
     loadingTransactions, getTransactionsToExport } = useTransaction()
 
-const { categories, getCategories } = useCategory()   
+
 const router = useRouter()
 
 start()
 
 
-const handleUpdateFilters = (newFilters: Partial<typeof filters>) => {
-    Object.assign(filters, newFilters)
-    reloadTransactions()
-}
+/*COMENTADO PORQUE NO SE USA */
+// const handleUpdateFilters = (newFilters: Partial<typeof filters>) => {
+//     Object.assign(filters, newFilters)
+//     reloadTransactions()
+// }
 
-const handleClearFilters = () => {
-    clearFilters()
-    reloadTransactions()
-}
+// const handleClearFilters = () => {
+//     clearFilters()
+//     reloadTransactions()
+// }
 
 
 // Helper function to get transaction type styling
@@ -69,6 +65,7 @@ const getCategoryIcon = (category: string) => {
 
 
 const dateInput = ref<HTMLInputElement | null>(null)
+const dateEndInput = ref<HTMLInputElement | null>(null)
 
 const changeDate = async () => {
   if (!dateInput.value) return
@@ -85,6 +82,11 @@ const handleChangeDate = async (e: Event) => {
   filters.offset = 0
   transactions.value = []
   getTransactions()
+}
+
+const changeEndDate = async () => {
+  if (!dateEndInput.value) return
+  dateEndInput.value.showPicker()
 }
 
 const handleLoadMore = () => {  
@@ -131,27 +133,43 @@ const handleExportExcel = async () => {
     exportTransactionsToExcel(transactions)
 }
 
-const renderAdvancedFilter = ref(false)
+/*COMENTADO PORQUE NO SE USA */
+// const renderAdvancedFilter = ref(false)
 
-const toogleAdvancedFilters = async () => {
-    renderAdvancedFilter.value = !renderAdvancedFilter.value
+// const toogleAdvancedFilters = async () => {
+//     renderAdvancedFilter.value = !renderAdvancedFilter.value
 
-    if (categories.value.length < 1) {
-        getCategories()
+//     if (categories.value.length < 1) {
+//         getCategories()
+//     }
+
+//     if (renderAdvancedFilter.value) {
+//         document.body.style.overflow = 'hidden';
+//     } else {
+//         document.body.style.overflow = 'auto';
+//     }
+// }
+
+const formatTransactionDate = (date: string) => {
+    if (filters.startDate && filters.endDate) {
+        return formatHours(date)
     }
+    return formatOnlyHours(date)
+}
 
-    if (renderAdvancedFilter.value) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = 'auto';
+const formatFilterDate = (date: string, prefijo: string = '') => {
+    if (filters.startDate && filters.endDate) {
+        return   `${prefijo} ${formatDate(date)}`
     }
+    return formatFullDateText(date)
 }
 </script>
 
 <template>
     <CommonLoader v-if="loadingTransactions"/>
 
-    <TransactionFilters v-if="renderAdvancedFilter" 
+    <!-- COMENTADO PORQUE NO SE USA LOS FILTROS AVANZADOS -->
+    <!-- <TransactionFilters v-if="renderAdvancedFilter" 
         :categories="categories"
         :filters="filters"
         @clearFilters="handleClearFilters"
@@ -167,7 +185,7 @@ const toogleAdvancedFilters = async () => {
             </button>
         </template>
 
-    </TransactionFilters>
+    </TransactionFilters> -->
     <div class="min-h-screen">
         <!-- Sticky Header Section -->
         <div class="sticky top-0 z-10 bg-neutral-950  shadow-lg border-neutral-950">
@@ -178,25 +196,58 @@ const toogleAdvancedFilters = async () => {
             <section class="shadow-lg rounded-xl py-2 text-white shadow-lg">
                 <div class="flex justify-between items-center">
                     <div class="w-full leading-none flex gap-5 flex justify-between ">
-                        <input ref="dateInput" class="text-sm hidden" type="date" v-model="filters.startDate"
-                            @change="handleChangeDate"
-                        >
-                        <div
-                            @click="changeDate"
-                        >
-                            <span class="text-sm cursor-pointer hover:bg-neutral-600  bg-neutral-700/50 rounded-full px-4 py-2"
-                            >
-                                {{ formatFullDateText(filters.startDate) }}
-                                <i class="ml-1 pi pi-pencil"></i>
-                            </span>
+                        <div class="flex gap-2 flex-wrap">
+                            <div>
+                                <input ref="dateInput" class="text-sm hidden" type="date" v-model="filters.startDate"
+                                    @change="handleChangeDate"
+                                >
+                                <div
+                                    @click="changeDate"
+                                >
+                                    <span class="inline-block text-sm cursor-pointer hover:bg-neutral-600 bg-neutral-700/50 rounded-full px-3 py-2"
+                                    >
+                                        {{ formatFilterDate(filters.startDate, 'Del ') }}
+                                        <i class="ml-1 pi pi-pencil"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <input ref="dateEndInput" class="text-sm hidden" type="date" v-model="filters.endDate"
+                                >
+                                <div
+                                    @click="changeEndDate"
+                                >   
+                                    <template v-if="filters.endDate">
+                                        <span class="inline-block text-sm cursor-pointer hover:bg-indigo-800 bg-indigo-800/70 rounded-full px-3 py-2">
+                                            {{ formatFilterDate(filters.endDate, 'Al ') }}
+                                            <i class="ml-1 pi pi-pencil"></i>
+                                        </span> 
+                                    </template>
+                                    <template v-else>      
+                                        <span class="cursor-pointer text-indigo-400 inline-block hover:bg-indigo-600/60 rounded-full px-3 py-2">
+                                            <i class="pi pi-calendar-plus text-lg"></i>
+                                        </span>
+                                    </template>
+                                </div>
+                                <div>
+                                    <span 
+                                        title="Borrar fecha"
+                                        class="inline-block  cursor-pointer hover:bg-red-900/60 hover:text-white text-red-500 border border-red-600/60 rounded-lg px-2 py-2"
+                                        v-if="filters.endDate"
+                                        @click="filters.endDate = null"
+                                    >
+                                        <i class="pi pi-calendar-times text-lg"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <span class="px-3 py-2"
+                        <!-- <div>
+                            <span class="inline-block px-3 py-2"
                                 @click="toogleAdvancedFilters"
                             >
                                 <i class="pi pi-cog"></i>
                             </span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </section>
@@ -264,7 +315,7 @@ const toogleAdvancedFilters = async () => {
                             <!-- Action Menu (Optional) -->
                             <div class="pt-1 leading-none text-sm font-bold text-gray-400">
                                 <!-- {{ formatDate(transaction.date) }}  -->
-                                {{ formatOnlyHours(transaction.createdAt) }}
+                                {{ formatTransactionDate(transaction.createdAt) }}
                              </div>
                             <!-- <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors"
                              @click="editTransaction(transaction)"

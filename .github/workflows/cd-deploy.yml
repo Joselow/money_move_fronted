@@ -28,7 +28,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          # script_stop: true
           script: |
             set -e
             BRANCH="${{ github.event.workflow_run.head_branch }}"

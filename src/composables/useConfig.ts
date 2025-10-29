@@ -4,6 +4,7 @@ import configService from "../services/configService.js";
 
 import type { UserConfig } from "@/interfaces/index.js";
 import type { Account } from "@/interfaces/index.js";
+import { toast } from "vue-sonner";
 
 
 const config: UserConfig = reactive({
@@ -24,6 +25,9 @@ export const useConfig = () => {
             loading.value = true
             await configService.selectAccount(account.id);
             config.account = account;
+
+            
+            toast.success('Cuenta'+ " '" + account.name + "' " + 'fue seleccionada correctamente')
 
             return {
                 success: true

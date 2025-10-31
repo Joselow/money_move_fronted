@@ -11,27 +11,27 @@
   },
   "dependencies": {
     "@linways/table-to-excel": "^1.0.4",
-    "@tailwindcss/vite": "^4.1.11",
-    "axios": "^1.10.0",
-    "dayjs": "^1.11.13",
+    "@tailwindcss/vite": "^4.1.16",
+    "axios": "^1.13.1",
+    "dayjs": "^1.11.18",
     "js-cookie": "^3.0.5",
     "primeicons": "^7.0.0",
-    "vue": "^3.5.17",
-    "vue-router": "4",
-    "vue-sonner": "^2.0.1"
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3",
+    "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^24.0.13",
-    "@vitejs/plugin-vue": "^5.0.3",
+    "@types/node": "^24.6.0",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
-    "@vue/tsconfig": "^0.7.0",
-    "eslint": "^9.36.0",
+    "@vue/tsconfig": "^0.8.1",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-vue": "^10.5.0",
+    "eslint-plugin-vue": "^10.5.1",
     "tailwindcss": "^4.1.16",
-    "typescript": "~5.2.2",
-    "vite": "^5.1.0",
-    "vue-tsc": "^1.8.25"
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vue-tsc": "^3.1.0"
   }
 }

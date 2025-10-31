@@ -6,7 +6,11 @@ export const currentDate = () => {
     const today = dayjs();
     // const formattedDate =  today.format('DD/MM/YYYY');
 
-    return  today.format('YYYY-MM-DD')
+    return today.format('YYYY-MM-DD')
+}
+
+export const formatHours = (date: string) => {
+    return dayjs(date).format('DD/MM/YY h:mm A')
 }
 
 export const formatDate = (date: string) => {

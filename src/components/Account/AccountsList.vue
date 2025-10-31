@@ -18,11 +18,17 @@ const props = defineProps<{
   accounts: Account[]
 }>()
 
+const emits = defineEmits<{
+   accountSelected: [void]
+}>()
+
 
 const handleAccountSelect = async (account: Account) => {
   const { success } = await selectAccount(account)
   if (!success) return 
+
   getTotalTransactions()
+  emits('accountSelected')
 }
 
 </script>

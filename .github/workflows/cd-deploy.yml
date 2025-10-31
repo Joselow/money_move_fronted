@@ -20,20 +20,6 @@ jobs:
       }}
     runs-on: ubuntu-latest
     steps:
-      - name: Test SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          ssh_args: "-o StrictHostKeyChecking=no"
-          script: "echo 'Conexión OK a $(hostname)'"
-
-      - name: Prepare known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p "${{ secrets.VPS_PORT }}" "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
 
       - name: SSH deploy (pull + build)
         uses: appleboy/ssh-action@v1
@@ -42,7 +28,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          script_stop: true
           script: |
             set -e
             BRANCH="${{ github.event.workflow_run.head_branch }}"
@@ -53,8 +38,8 @@ jobs:
             git checkout -B "$BRANCH" "origin/$BRANCH"
             git reset --hard "origin/$BRANCH"
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && nvm use "$NODE_VER"
-            if command -v pnpm >/dev/null 2>&1; then pnpm install --frozen-lockfile && pnpm build;
-            elif command -v yarn >/dev/null 2>&1; then yarn install --frozen-lockfile && yarn build;
-            else npm ci && npm run build; fi
+            source ~/.nvm/nvm.sh
+            npm install 
+            npm run build
             echo "OK deploy ($BRANCH)"
+            exit

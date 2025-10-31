@@ -64,6 +64,7 @@ const openAccountsListModal = async () => {
     <div class="p-4">
       <AccountsList 
         :accounts="accounts"
+        @accountSelected="close"
       />
     </div>
   </ModalBase>

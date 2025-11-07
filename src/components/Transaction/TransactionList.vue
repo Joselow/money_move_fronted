@@ -8,7 +8,7 @@ import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
-import { currentDate, formatOnlyHours, formatFullDateText, formatDate, formatHours, dateSeparateBy } from '@/utils/date';
+import { currentDate, formatOnlyHours, formatFullDateText, formatDate, dateSeparateBy } from '@/utils/date';
 import { formatCurrency } from '@/utils/format';
 
 import { useDate } from '@/composables/useDate';

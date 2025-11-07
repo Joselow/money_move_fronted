@@ -43,11 +43,6 @@ export const formatIsoHours = (date: string) => {
     
     if (!date) return null
     const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
-    console.log({
-        formattedDate,
-        date
-    });
-    
     return formattedDate
 }
 
@@ -55,4 +50,10 @@ export const formatIsoHours = (date: string) => {
 export const endOfMonth = () => {
     const today = dayjs();
     return today.endOf('month').format('YYYY-MM-DD')
+}
+
+export const dateSeparateBy = (date: string, separator = '-') => {
+    const formattedDate = dayjs(date).format(`DD${separator}MM${separator}YY`)
+    
+    return formattedDate
 }

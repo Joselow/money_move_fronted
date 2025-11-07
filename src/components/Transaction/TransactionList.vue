@@ -8,7 +8,7 @@ import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
-import { currentDate, formatOnlyHours, formatFullDateText, formatDate, formatHours } from '@/utils/date';
+import { currentDate, formatOnlyHours, formatFullDateText, formatDate, formatHours, dateSeparateBy } from '@/utils/date';
 import { formatCurrency } from '@/utils/format';
 
 import { useDate } from '@/composables/useDate';
@@ -136,7 +136,19 @@ function start () {
 
 const handleExportExcel = async () => {
     const transactions = await getTransactionsToExport()
-    exportTransactionsToExcel(transactions)
+    const fileName = buildFileName()
+    exportTransactionsToExcel(transactions, fileName)
+}
+
+const buildFileName = () => {
+    let dateText = ''
+    if (filters.startDate && filters.endDate) {
+        dateText = `${dateSeparateBy(filters.startDate)}_${dateSeparateBy(filters.endDate)}`
+    } else {
+        dateText = `${dateSeparateBy(filters.startDate ?? currentDate)}`  
+    }
+
+    return `Money_move_Transactions_${dateText}`
 }
 
 /*COMENTADO PORQUE NO SE USA */

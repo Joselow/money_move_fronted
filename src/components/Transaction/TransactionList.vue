@@ -8,7 +8,7 @@ import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
-import { currentDate, formatOnlyHours, formatFullDateText, formatDate, formatHours } from '@/utils/date';
+import { currentDate, formatOnlyHours, formatFullDateText, formatDate, dateSeparateBy } from '@/utils/date';
 import { formatCurrency } from '@/utils/format';
 
 import { useDate } from '@/composables/useDate';
@@ -84,6 +84,12 @@ const handleChangeDate = async (e: Event) => {
   getTransactions()
 }
 
+const handleChangeEndDate = async () => {
+    filters.offset = 0
+    transactions.value = []
+    getTransactions()
+}
+
 const changeEndDate = async () => {
   if (!dateEndInput.value) return
   dateEndInput.value.showPicker()
@@ -130,7 +136,19 @@ function start () {
 
 const handleExportExcel = async () => {
     const transactions = await getTransactionsToExport()
-    exportTransactionsToExcel(transactions)
+    const fileName = buildFileName()
+    exportTransactionsToExcel(transactions, fileName)
+}
+
+const buildFileName = () => {
+    let dateText = ''
+    if (filters.startDate && filters.endDate) {
+        dateText = `${dateSeparateBy(filters.startDate)}_${dateSeparateBy(filters.endDate)}`
+    } else {
+        dateText = `${dateSeparateBy(filters.startDate ?? currentDate)}`  
+    }
+
+    return `Money_move_Transactions_${dateText}`
 }
 
 /*COMENTADO PORQUE NO SE USA */
@@ -150,11 +168,11 @@ const handleExportExcel = async () => {
 //     }
 // }
 
-const formatTransactionDate = (date: string) => {
+const formatTransactionDate = (transaction: TransactionItem) => {
     if (filters.startDate && filters.endDate) {
-        return formatHours(date)
+        return `${formatDate(transaction.date)} ${formatOnlyHours(transaction.createdAt)}`
     }
-    return formatOnlyHours(date)
+    return formatOnlyHours(transaction.createdAt)
 }
 
 const formatFilterDate = (date: string, prefijo: string = '') => {
@@ -163,6 +181,15 @@ const formatFilterDate = (date: string, prefijo: string = '') => {
     }
     return formatFullDateText(date)
 }
+
+const removeFilterEndDate = async () => {
+    filters.endDate = null
+    transactions.value = []
+    getTransactions()
+}
+
+
+
 </script>
 
 <template>
@@ -213,6 +240,7 @@ const formatFilterDate = (date: string, prefijo: string = '') => {
                             </div>
                             <div class="flex gap-2">
                                 <input ref="dateEndInput" class="text-sm hidden" type="date" v-model="filters.endDate"
+                                    @change="handleChangeEndDate"
                                 >
                                 <div
                                     @click="changeEndDate"
@@ -234,7 +262,7 @@ const formatFilterDate = (date: string, prefijo: string = '') => {
                                         title="Borrar fecha"
                                         class="inline-block  cursor-pointer hover:bg-red-900/60 hover:text-white text-red-500 border border-red-600/60 rounded-lg px-2 py-2"
                                         v-if="filters.endDate"
-                                        @click="filters.endDate = null"
+                                        @click="removeFilterEndDate"
                                     >
                                         <i class="pi pi-calendar-times text-lg"></i>
                                     </span>
@@ -315,7 +343,7 @@ const formatFilterDate = (date: string, prefijo: string = '') => {
                             <!-- Action Menu (Optional) -->
                             <div class="pt-1 leading-none text-sm font-bold text-gray-400">
                                 <!-- {{ formatDate(transaction.date) }}  -->
-                                {{ formatTransactionDate(transaction.createdAt) }}
+                                {{ formatTransactionDate(transaction) }}
                              </div>
                             <!-- <button class="cursor-pointer text-md text-gray-400 mb-0 pb-0 hover:text-white px-3 rounded-full hover:scale-105 transition-colors"
                              @click="editTransaction(transaction)"

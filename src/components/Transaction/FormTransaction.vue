@@ -112,7 +112,7 @@ function clearForm () {
     categoryId.value = null
     amount.value = null
     notes.value = ''
-    infoDate.value = null
+    // infoDate.value = null
 }
 
 function setForm (data: TransactionItem) {
@@ -171,9 +171,9 @@ onMounted(async() => {
 })
 
 const handleChangeDate = async () => {
-    if (!id && infoDate.value) {
-        infoDate.value = targetDate.value
-    }
+    // if (!id && infoDate.value) {
+    //     infoDate.value = targetDate.value
+    // }
 }
 
 </script>

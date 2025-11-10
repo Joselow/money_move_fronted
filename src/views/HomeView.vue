@@ -79,7 +79,7 @@ const changeDate = async () => {
         <input ref="dateInput" type="date" v-model="targetDate" @change="updateDate" class="hidden" />
       </div>
 
-      <button class="absolute right-0 top-0" @click="showOptions = true">
+      <!-- <button class="absolute right-0 top-0" @click="showOptions = true">
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
           <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -95,7 +95,7 @@ const changeDate = async () => {
               stroke="#cfcfcf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
           </g>
         </svg>
-      </button>
+      </button> -->
     </div>
 
     <div class="mt-2 flex flex-col justify-evenly space-y-4 relative">

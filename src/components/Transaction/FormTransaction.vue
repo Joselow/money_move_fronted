@@ -15,6 +15,7 @@ import type { Category, TransactionItem, TransactionType } from '@/interfaces';
 import { useDate } from '@/composables/useDate';
 import { getItem } from '@/utils/localStorage';
 import { currentDate } from '@/utils/date';
+import { toast } from 'vue-sonner';
 
 const { categories, getCategories } = useCategory()
 const { createTransaction, getTransactionById, updateTransaction, loading } = useTransaction()
@@ -48,9 +49,9 @@ async function startRequest() {
     if (!id) {
         clearForm()
 
-        if (targetDate.value !== currentDate()) {
-            infoDate.value = targetDate.value
-        }
+        infoDate.value = targetDate.value
+        // if (targetDate.value !== currentDate()) {
+        // }
         render.value = true
         return
     }
@@ -80,24 +81,26 @@ async function startRequest() {
 
 const save = async() => {
     if (!categoryId.value || !amount.value) {
+        toast.error('Debe seleccionar una categoría y un monto valido')
         return
     }
+
+    const data = {
+        categoryId: categoryId.value,
+        amount: Number(amount.value),
+        description: notes.value,
+        date: String(infoDate.value),
+        accountId: config.account?.id,
+    }
+
     const { success } = id 
         ? await updateTransaction({
             id: Number(id),
-            categoryId: categoryId.value,
-            amount: Number(amount.value),
-            description: notes.value,
-            date: String(infoDate.value),
-            accountId: config.account?.id,
+           ...data
         }) 
         : await createTransaction({
             type: props.type,
-            categoryId: categoryId.value,
-            amount: Number(amount.value),
-            description: notes.value,
-            date: targetDate.value,
-            accountId: config.account?.id,
+            ...data
         })
     
     if (success) {
@@ -182,15 +185,14 @@ const handleChangeDate = async () => {
     <CommonLoader v-if="loading"/>
     <template v-if="render">
         <div :class="`bg-neutral-900 border border-neutral-700 rounded-2xl py-2 px-4 flex flex-col gap-5 shadow-2xl ${border}`">
-            <div class="text-lg text-end text-white"
-                v-if="infoDate"
-            >
+            <div class="text-lg text-end text-white">
                 <label class="text-sm font-medium tex-muted text-neutral-300 me-2" for="date">Fecha transacción</label>
-                <input type="date" id="date" v-model="infoDate"
+                <input type="date" id="date" 
+                    v-model="infoDate"
+                    :max="currentDate()"
                     @change="handleChangeDate"
                 >
             </div>
-    
             <div>
                 <ScrollX class="mt-1">
                     <template v-for="category in categories" :key="category.id">

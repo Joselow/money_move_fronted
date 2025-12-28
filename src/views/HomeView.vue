@@ -115,9 +115,20 @@ const changeDate = async () => {
         <div class="border-2 border-rose-400 rounded-2xl w-full h-24 flex items-center justify-center ">
 
           <!-- inviertelo como esejo verticalmente   -->
-          <i class="pi pi-arrow-up-right
- text-2xl transform rotate-180 me-4 text-red-400 animate-bounce"></i>
-          <svg class="animate-pulse" height="64px" width="64px" version="1.1" id="Layer_1"
+          <!-- <i class="pi pi-arrow-up-right text-2xl transform rotate-180 me-4 text-red-400 animate-bounce"></i> -->
+          <svg class="" style="color: #ff5f7a;" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+            <!-- wallet -->
+            <path  d="M4 8.5A3.5 3.5 0 0 1 7.5 5h10A2.5 2.5 0 0 1 20 7.5V16a3 3 0 0 1-3 3H7.5A3.5 3.5 0 0 1 4 15.5z"/>
+            <path d="M20 9h-4.2a2 2 0 0 0 0 4H20"/>
+            <path d="M16.2 11h.01"/>
+            <!-- arrow out -->
+            <path d="M9 12H3"/>
+            <path d="M6 9l-3 3 3 3"/>
+          </svg>
+
+
+          <!-- <svg class="animate-pulse" height="64px" width="64px" version="1.1" id="Layer_1"
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
             xml:space="preserve" fill="#000000">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -146,7 +157,7 @@ const changeDate = async () => {
                 </path>
               </g>
             </g>
-          </svg>
+          </svg> -->
         </div>
       </router-link>
 

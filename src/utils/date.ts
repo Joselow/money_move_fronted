@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
+// import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/es'
 dayjs.locale('es')
-dayjs.extend(utc);
+// dayjs.extend(utc);
 
 export const currentDate = () => {
     const today = dayjs();
@@ -21,7 +21,7 @@ export const formatDate = (date: string) => {
 }
 
 export const formatOnlyHours = (date: string) => {
-    const formattedDate =  dayjs.utc(date).format('h:mm A');
+    const formattedDate =  dayjs(date).format('h:mm A');
     return  formattedDate
 }
 

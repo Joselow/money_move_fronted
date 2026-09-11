@@ -8,10 +8,11 @@ import CommonLoader from '@/commons/CommonLoader.vue';
 import EmptyRecords from '@/commons/EmptyRecords.vue';
 
 import { exportTransactionsToExcel } from '@/helpers/exportExcel';
+import { copyTransactionsToClipboard } from '@/helpers/exportTsv';
+import { toast } from 'vue-sonner';
 import { currentDate, formatOnlyHours, formatFullDateText, formatDate, dateSeparateBy } from '@/utils/date';
 import { formatCurrency } from '@/utils/format';
 
-import { useDate } from '@/composables/useDate';
 import { useTransaction } from '@/composables/useTransaction';
 import { useConfig   } from '@/composables/useConfig';
 
@@ -19,8 +20,6 @@ import { useConfig   } from '@/composables/useConfig';
 import { TRANSACTION_TYPE } from '@/constants/transaction';
 import type { TransactionItem } from '@/interfaces';
 
-const { targetDate, 
- } = useDate()
 const { config } = useConfig()
 
 const { transactions, getTransactions, reloadTransactions, filters, 
@@ -129,7 +128,7 @@ function getDateFromForwardQueryParams () {
 
 function start () {
     const date = getDateFromForwardQueryParams()
-    filters.startDate = date ?? targetDate.value
+    filters.startDate = date ?? currentDate()
     filters.offset = 0
     getTransactions()
 }
@@ -138,6 +137,26 @@ const handleExportExcel = async () => {
     const transactions = await getTransactionsToExport()
     const fileName = buildFileName()
     exportTransactionsToExcel(transactions, fileName)
+}
+
+const handleCopyTsv = async () => {
+    const exportTransactions = await getTransactionsToExport()
+
+    if (!exportTransactions.length) {
+        toast.error('No hay transacciones para copiar')
+        return
+    }
+
+    try {
+        const copied = await copyTransactionsToClipboard(exportTransactions)
+        if (copied) {
+            toast.success('TSV copiado al portapapeles')
+        } else {
+            toast.error('No se pudo copiar al portapapeles')
+        }
+    } catch {
+        toast.error('No se pudo copiar al portapapeles')
+    }
 }
 
 const buildFileName = () => {
@@ -287,13 +306,20 @@ const removeFilterEndDate = async () => {
             >
                 <i class="pi pi-refresh"></i>  RECARGAR
             </button>
-            <button class="text-xs cursor-pointer border border-green-600 text-white font-bold hover:bg-green-600/50 shadow-lg 
-                px-4 py-1 rounded-lg  transition-colors font-medium"
-                @click="handleExportExcel"
-            > 
-                <i class="pi pi-file-excel"></i> EXCEL
-                <!-- Exportar -->
-            </button>
+            <div class="flex gap-2">
+                <button class="text-xs cursor-pointer border border-green-600 text-white font-bold hover:bg-green-600/50 shadow-lg 
+                    px-4 py-1 rounded-lg transition-colors font-medium"
+                    @click="handleExportExcel"
+                >
+                    <i class="pi pi-file-excel"></i> EXCEL
+                </button>
+                <button class="text-xs cursor-pointer border border-indigo-600 text-white font-bold hover:bg-indigo-600/50 shadow-lg 
+                    px-4 py-1 rounded-lg transition-colors font-medium"
+                    @click="handleCopyTsv"
+                >
+                    <i class="pi pi-copy"></i> Copiar TSV
+                </button>
+            </div>
         </div>
 
         <!-- Content Area -->

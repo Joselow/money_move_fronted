@@ -1,5 +1,5 @@
 import { ref, reactive } from 'vue'
-import { createTransactionRq , deleteTransactionRq, getTotalTransactionsRq, getTransactionByIdRq, getTransactionsRq, updateTransactionRq, } from '../services/transactionService'
+import { createTransactionRq , deleteTransactionRq, getTotalTransactionsRq, getTransactionByIdRq, getTransactionsRq, getTransactionsExportRq, updateTransactionRq, } from '../services/transactionService'
 import type { Transaction, TransactionItem, TransactionType } from '../interfaces'
 import { toast } from 'vue-sonner'
 import { useDate } from './useDate'
@@ -9,7 +9,8 @@ import { useConfig } from './useConfig'
 const { targetDate } = useDate()
 const { config } = useConfig()
 
-const totalTransaction = ref(0)
+const dailyInflows = ref(0)
+const dailyOutflows = ref(0)
 
 export interface TransactionFilters {
   limit: number | undefined;
@@ -180,7 +181,7 @@ export function useTransaction() {
     error.value = null
 
     try {
-      const result = await getTransactionsRq({...filters, all: true})
+      const result = await getTransactionsExportRq({...filters})
       return result
     } catch (err: any) {
       error.value = err?.message || 'Error al obtener las cuentas'
@@ -195,18 +196,14 @@ export function useTransaction() {
       toast.error('No existe una cuenta seleccionada') 
       return
     }
-    console.log({targetDate : targetDate.value});
-
     loading.value = true
     error.value = null
     try {
-      console.log({date});
-      
       const dateValue = date ?? targetDate.value
-      
 
       const result = await getTotalTransactionsRq({ date: dateValue })
-      totalTransaction.value = result.total
+      dailyInflows.value = result.inflows
+      dailyOutflows.value = result.outflows
       
     } catch (err: any) {
       error.value = err?.message || 'Error al obtener las cuentas'
@@ -243,7 +240,8 @@ export function useTransaction() {
     updateTransaction,
     deleteTransaction,
     
-    totalTransaction,
+    dailyInflows,
+    dailyOutflows,
     getTotalTransactions,
     
     filters,

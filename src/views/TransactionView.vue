@@ -1,5 +1,6 @@
   
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import FormTransaction from '@/components/Transaction/FormTransaction.vue'
@@ -11,15 +12,17 @@ import { useTransaction } from '@/composables/useTransaction'
 const router = useRouter()
 const route = useRoute()
 
-const { id } = route.params
+const id = computed(() => route.params.id)
 
-const type = route.meta.type == TRANSACTION_TYPE.INFLOW ?  TRANSACTION_TYPE.INFLOW :  TRANSACTION_TYPE.OUTFLOW
+const type = computed(() =>
+  route.meta.type === TRANSACTION_TYPE.INFLOW ? TRANSACTION_TYPE.INFLOW : TRANSACTION_TYPE.OUTFLOW
+)
 
 const { deleteTransaction, loading } = useTransaction()
 
 
 const handleDeleteTransaction = async () => {
-    if (!id) {
+    if (!id.value) {
         return
     }
     const confirmed = confirm('¿Estas seguro de eliminar la transacción?')
@@ -27,7 +30,7 @@ const handleDeleteTransaction = async () => {
         return
     }
     
-    const { success } = await deleteTransaction(Number(id))
+    const { success } = await deleteTransaction(Number(id.value))
 
     if (success) {
         router.push({ name: 'List' })
@@ -40,7 +43,7 @@ const handleDeleteTransaction = async () => {
     <FullScreenLoader v-if="loading" />
 
     <div class="flex justify-between">
-        <h1 class="text-xl font-bold tracking-wider mb-4 text-white">{{ id ? 'Ajustar' : 'Registrar' }} {{ type == TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
+        <h1 class="text-xl font-bold tracking-wider mb-4 text-white">{{ id ? 'Ajustar' : 'Registrar' }} {{ type === TRANSACTION_TYPE.INFLOW ? 'Ingreso' : 'Gasto' }}</h1>
         <div class="flex justify-end mb-2"
             v-if="id"
         >
@@ -55,8 +58,6 @@ const handleDeleteTransaction = async () => {
     <div class="">
        
 
-       <FormTransaction 
-            :type="type"
-        />
+       <FormTransaction :type="type" />
     </div>
 </template>

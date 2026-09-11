@@ -1,16 +1,19 @@
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
+import NavBar from './components/NavBar.vue'
 
-const NavBar = defineAsyncComponent(() => import('./components/NavBar.vue'))
 const FullScreenOptions = defineAsyncComponent(() => import('./components/FullScreenOptions.vue'))
 
 import { useAuth } from './composables/useAuth'
 import { Toaster } from 'vue-sonner'
 
-const { checkAuth, authenticated } = useAuth()
+const { checkAuth, authenticated, authReady } = useAuth()
 
-checkAuth() 
 const showOptions = ref(false)
+
+onMounted(async () => {
+  await checkAuth()
+})
 
 </script>
 
@@ -18,7 +21,7 @@ const showOptions = ref(false)
   <Toaster richColors position="top-right" />
   <div class="w-full min-h-screen flex justify-center px-6 py-7">
     <main class="w-12/12 md:w-6/12 2xl:w-8/12 relative">
-      <template v-if="authenticated">
+      <template v-if="authReady && authenticated">
           <FullScreenOptions v-model="showOptions"/>
           <button class="z-50 absolute right-0 top-0" @click="showOptions = true">
             <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,11 +39,11 @@ const showOptions = ref(false)
                   stroke="#cfcfcf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
               </g>
             </svg>
-          </button> 
+          </button>
         </template>
 
-        <router-view />
-        <NavBar v-if="authenticated" />
+        <router-view v-if="authReady" />
+        <NavBar v-if="authReady && authenticated" />
     </main>
   </div>
 </template>

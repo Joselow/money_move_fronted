@@ -4,31 +4,30 @@ import { setAuthToken, getAuthToken, isAuthenticated, removeAuthToken } from '..
 import { authService } from '../services/authService'
 
 const user = ref<any>(null)
+const authReady = ref(false)
 
+// Una sola instancia compartida: todos los componentes reaccionan al mismo estado
+const authenticated = computed(() => {
+  console.log('isAuthenticated', isAuthenticated())
+  return user.value !== null && isAuthenticated()
+})
 
 export function useAuth() {
-  
   const router = useRouter()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // Computed property para verificar si está autenticado
-  const authenticated = computed(() => {
-    // return true    
-    return isAuthenticated() && user.value !== null
-  })
-
-  // Función de login
   const login = async (email: string, password: string) => {
     loading.value = true
     error.value = null
 
     try {
       const response = await authService.login({ email, password })
-      
+
       if (response.success && response.token) {
         setAuthToken(response.token)
         user.value = response.user
+        authReady.value = true
         router.push({ name: 'Home' })
       } else {
         error.value = response.message || 'Error desconocido'
@@ -41,34 +40,36 @@ export function useAuth() {
     }
   }
 
-  // Función de logout
   const logout = async () => {
-      removeAuthToken()
-      user.value = null
-      router.push({ name: 'Login' })
+    removeAuthToken()
+    user.value = null
+    router.push({ name: 'Login' })
   }
 
-  // Función para verificar el token al cargar la aplicación
   const checkAuth = async () => {
     const token = getAuthToken()
-    
-    if (token) {
-      try {
-        const response = await authService.getCurrentUser()
 
-        if (!response.success || !response.user) {
-          logout()
-        }
-        
-        user.value = response.user
+    if (!token) {
+      authReady.value = true
+      return
+    }
 
-        // if (!config.account) {
-        //   getConfig()
-        // }
-      } catch (err) {
-        console.error('Token verification error:', err)
-        logout()
+    try {
+      const response = await authService.getCurrentUser()
+
+      if (!response.success || !response.user) {
+        removeAuthToken()
+        user.value = null
+        return
       }
+
+      user.value = response.user
+    } catch (err) {
+      console.error('Token verification error:', err)
+      removeAuthToken()
+      user.value = null
+    } finally {
+      authReady.value = true
     }
   }
 
@@ -76,9 +77,10 @@ export function useAuth() {
     user,
     loading,
     error,
+    authReady,
     authenticated,
     login,
     logout,
     checkAuth
   }
-} 
+}

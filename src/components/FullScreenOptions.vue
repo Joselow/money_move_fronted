@@ -22,6 +22,7 @@ function close() {
 
 const showModalFormAccount = ref(false)
 const showAccountsList = ref(false)
+const showLogoutConfirm = ref(false)
 
 const onCreateAccount = () => {
   open.value = false
@@ -34,6 +35,16 @@ const openAccountsListModal = async () => {
   renderAccountsListModal.value = true
   showAccountsList.value = true
   getAccounts()
+}
+
+const openLogoutConfirm = () => {
+  showLogoutConfirm.value = true
+}
+
+const confirmLogout = async () => {
+  showLogoutConfirm.value = false
+  close()
+  await logout()
 }
 
 </script>
@@ -55,6 +66,33 @@ const openAccountsListModal = async () => {
             </button>
           </template>
         </FormAccount>
+      </div>
+    </div>
+  </ModalBase>
+
+  <ModalBase v-model="showLogoutConfirm" max-width="sm">
+    <div class="p-5">
+      <h2 class="text-lg font-bold tracking-wider mb-2 text-gray-900 dark:text-white">
+        <i class="pi pi-sign-out" /> Cerrar sesión
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-neutral-300 mb-5">
+        ¿Estás seguro de que deseas cerrar sesión?
+      </p>
+      <div class="flex gap-3">
+        <button
+          type="button"
+          class="flex-1 py-2 rounded-lg border border-gray-300 dark:border-neutral-600 text-gray-700 dark:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 transition"
+          @click="showLogoutConfirm = false"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="flex-1 py-2 rounded-lg border border-red-600 text-white hover:bg-red-700/50 transition"
+          @click="confirmLogout"
+        >
+          Sí, salir
+        </button>
       </div>
     </div>
   </ModalBase>
@@ -89,7 +127,7 @@ const openAccountsListModal = async () => {
         </button>
       </template>
       <template v-if="authenticated">
-        <button class="mt-4 w-full py-2 rounded-lg border border-red-600  text-white hover:bg-red-700/50 transition" @click="logout">
+        <button class="mt-4 w-full py-2 rounded-lg border border-red-600  text-white hover:bg-red-700/50 transition" @click="openLogoutConfirm">
           <i class="pi pi-sign-out" />
           Cerrar sesión
         </button>
